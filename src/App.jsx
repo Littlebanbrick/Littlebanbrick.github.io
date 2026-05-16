@@ -1,17 +1,32 @@
+import Header from './components/Header'
+import Hero from './components/Hero'
+import CardLink from './components/CardLink'
+
 function App() {
   return (
     <div style={{
       display: 'flex',
-      justifyContent: 'center',
-      alignItems: 'center',
-      height: '100vh',
-      fontFamily: 'Arial, sans-serif',
-      background: '#f5f5f5'
+      flexDirection: 'column',
+      minHeight: '100vh',
+      padding: '2rem',
+      maxWidth: '960px',
+      margin: '0 auto'
     }}>
-      <div style={{ textAlign: 'center' }}>
-        <h1 style={{ color: '#333' }}>Welcome to My Site</h1>
-        <p style={{ color: '#666' }}>This is a minimal React page hosted on GitHub Pages.</p>
-      </div>
+      <Header />
+      <main style={{ flex: 1, display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
+        <Hero />
+        <section style={{
+          marginTop: '3rem',
+          display: 'flex',
+          justifyContent: 'center'
+        }}>
+          <CardLink
+            href="https://littlebanbrick.cn"
+            title="My Blog"
+            description="Read more on littlebanbrick.cn"
+          />
+        </section>
+      </main>
     </div>
   )
 }
