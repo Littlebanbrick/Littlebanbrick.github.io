@@ -14,7 +14,7 @@
   --text-light: #666;
   --border: #e0e0e0;
   --header-text: #555;
-  --card-hover-shadow: 0 4px 20px rgba(0,0,0,0.05);
+  --card-hover-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
 }
 
 [data-theme="dark"] {
@@ -24,10 +24,12 @@
   --text-light: #aaa;
   --border: #444;
   --header-text: #ccc;
-  --card-hover-shadow: 0 4px 20px rgba(255,255,255,0.05);
+  --card-hover-shadow: 0 4px 20px rgba(255, 255, 255, 0.05);
 }
 
-html, body, #root {
+html,
+body,
+#root {
   width: 100%;
   height: 100%;
   overflow-x: hidden;
@@ -39,10 +41,52 @@ body {
   color: var(--text);
   line-height: 1.6;
   -webkit-font-smoothing: antialiased;
-  transition: background-color 0.3s, color 0.3s;
+  transition:
+    background-color 0.3s,
+    color 0.3s;
 }
 
 a {
   color: inherit;
   text-decoration: none;
+}
+
+/* 封面动画相关 */
+.cover-visible {
+  transform: translateY(0);
+}
+
+.cover-hidden {
+  transform: translateY(-100%);
+}
+
+/* 内容区动画相关 */
+.content-visible {
+  transform: translateY(0);
+}
+
+.content-hidden {
+  transform: translateY(100%);
+}
+
+#cover-root,
+#content-root {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  transition: transform 0.7s cubic-bezier(0.65, 0.05, 0.36, 1);
+  will-change: transform;
+}
+
+/* 封面根元素置于内容区之上 */
+#cover-root {
+  z-index: 1000;
+}
+
+#content-root {
+  z-index: 500; /* 低于封面，但高于背景 */
+  background: var(--bg);
+  overflow-y: auto; /* 内容可滚动 */
 }
