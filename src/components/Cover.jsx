@@ -19,27 +19,34 @@ function Cover({ stage, onCoverClick, onCoverExitEnd }) {
     return () => el.removeEventListener("transitionend", handleTransitionEnd);
   }, [stage, onCoverExitEnd]);
 
-  const isExiting = stage === "cover-exit";
-  const isVisible = stage === "cover" || stage === "cover-exit"; // 退出动画需要可见
+  // at-rest visible & re-entering → cover-visible (translateY(0))
+  // exiting (slide up) & hidden → cover-hidden (translateY(-100%))
+  const coverClass =
+    stage === "cover" || stage === "content-exit"
+      ? "cover-visible"
+      : "cover-hidden";
+
+  // only clickable when at rest
+  const isClickable = stage === "cover";
 
   return (
     <div
       id="cover-root"
       ref={coverRef}
+      className={coverClass}
       style={{
         background: `
           linear-gradient(rgba(0,0,0,0.3), rgba(0,0,0,0.3)),
           url('https://i.imgur.com/Y9sQmXI.jpeg') center/cover no-repeat
         `,
-        display: isVisible ? "flex" : "none",
+        display: "flex",
         justifyContent: "center",
         alignItems: "center",
-        cursor: isExiting ? "default" : "pointer",
-        pointerEvents: isVisible ? "auto" : "none",
+        cursor: isClickable ? "pointer" : "default",
+        pointerEvents: isClickable ? "auto" : "none",
       }}
-      className={isVisible ? "cover-visible" : "cover-hidden"}
       onClick={() => {
-        if (!isExiting) onCoverClick();
+        if (isClickable) onCoverClick();
       }}
     >
       <div style={{ textAlign: "center", color: "#fff", userSelect: "none" }}>

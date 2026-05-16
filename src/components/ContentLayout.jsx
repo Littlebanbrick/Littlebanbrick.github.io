@@ -30,18 +30,25 @@ function ContentLayout({
     return () => el.removeEventListener("transitionend", handleTransitionEnd);
   }, [stage, onContentExitEnd]);
 
-  const isExiting = stage === "content-exit";
-  const isVisible = stage === "content" || stage === "content-exit";
+  // at-rest visible & entering → content-visible (translateY(0))
+  // exiting (slide down) & hidden → content-hidden (translateY(100%))
+  const contentClass =
+    stage === "content" || stage === "cover-exit"
+      ? "content-visible"
+      : "content-hidden";
+
+  // only interactive when at rest
+  const isInteractive = stage === "content";
 
   return (
     <div
       id="content-root"
       ref={contentRef}
-      className={isVisible ? "content-visible" : "content-hidden"}
+      className={contentClass}
       style={{
-        display: isVisible ? "flex" : "none",
+        display: "flex",
         flexDirection: "column",
-        pointerEvents: isVisible ? "auto" : "none",
+        pointerEvents: isInteractive ? "auto" : "none",
       }}
     >
       <Header toggleTheme={toggleTheme} theme={theme} />
