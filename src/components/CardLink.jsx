@@ -8,16 +8,16 @@ function CardLink({ href, title, description }) {
         display: 'block',
         textDecoration: 'none',
         color: 'inherit',
-        backgroundColor: '#fff',
-        border: '1px solid #e0e0e0',
+        backgroundColor: 'var(--bg-card)',
+        border: '1px solid var(--border)',
         borderRadius: '8px',
         padding: '1.5rem 2rem',
-        maxWidth: '400px',
         width: '100%',
         transition: 'box-shadow 0.2s ease, transform 0.2s ease',
+        marginBottom: '1rem'
       }}
       onMouseEnter={e => {
-        e.currentTarget.style.boxShadow = '0 4px 20px rgba(0,0,0,0.05)'
+        e.currentTarget.style.boxShadow = 'var(--card-hover-shadow)'
         e.currentTarget.style.transform = 'translateY(-2px)'
       }}
       onMouseLeave={e => {
@@ -26,14 +26,14 @@ function CardLink({ href, title, description }) {
       }}
     >
       <h2 style={{
-        fontSize: '1.5rem',
+        fontSize: '1.2rem',
         fontWeight: 'normal',
         marginBottom: '0.5rem',
-        color: '#111'
+        color: 'var(--text)'
       }}>
         {title}
       </h2>
-      <p style={{ fontSize: '1rem', color: '#777' }}>
+      <p style={{ fontSize: '0.95rem', color: 'var(--text-light)' }}>
         {description}
       </p>
     </a>
