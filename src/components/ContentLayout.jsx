@@ -77,9 +77,23 @@ async function loadNotesFromGlob(glob) {
           preview.substring(0, 150) + (preview.length > 150 ? "..." : "");
       }
 
-      return { id: fileName, title, preview, content };
+      // 检查是否置顶
+      // 格式：<!-- pinned: true -->（不写或 false 则不置顶）
+      const pinnedMatch = bodyWithoutTitle.match(
+        /<!--\s*pinned\s*:\s*(true|false)\s*-->/,
+      );
+      const pinned = pinnedMatch ? pinnedMatch[1] === "true" : false;
+
+      return { id: fileName, title, preview, content, pinned };
     }),
   );
+  // 置顶排序：置顶的笔记排前面，同组内按标题字母序
+  notes.sort((a, b) => {
+    if (a.pinned !== b.pinned) {
+      return a.pinned ? -1 : 1;
+    }
+    return a.title.localeCompare(b.title);
+  });
   return notes;
 }
 

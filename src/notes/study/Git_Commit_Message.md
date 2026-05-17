@@ -1,5 +1,7 @@
 # Writing Good Git Commit Messages
+
 <!--preview: 怎么写好Git commit messages？ -->
+<!-- pinned: true -->
 
 # Git Commit Message 写作
 
@@ -42,18 +44,18 @@ I'll be honest — at my current stage, I can only reliably recall `feat` and `f
 The `type` field is where most of my confusion lives. Here are the commonly used types and when to apply them — written as a reference table I wish I had memorized earlier:
 
 `type` 字段正是我困惑的集中地。以下是常用的类型及其使用场景——写成一个我但愿自己能早点背下来的参考表：
-| Type       | English Description & Examples | 中文说明与示例 |
+| Type | English Description & Examples | 中文说明与示例 |
 |------------|--------------------------------|----------------|
-| `feat`     | A new feature — something the user can now do that they couldn't before. Examples: adding a dark mode toggle, implementing a search bar, creating a new API endpoint. If you're introducing new capability, it's a feat. | 新功能——用户现在能做之前做不了的事。例子：增加暗色模式切换、实现搜索栏、创建新的 API 端点。凡是引入了新能力，就是 feat。 |
-| `fix`      | A bug fix — something that was broken and is now repaired. Examples: fixing a 404 error on a valid route, correcting a miscalculation in a billing function, repairing a broken CSS layout on mobile. The key distinction from `feat` is that nothing new is added; existing broken behavior is corrected. | 修 bug —— 之前坏了、现在修好了。例子：修了一个有效路由却返回 404 的问题、纠正了计费函数里的计算错误、修复了移动端上坏掉的 CSS 布局。和 `feat` 的关键区别在于：没有新增任何东西，只是把已有的错误行为改正了。 |
-| `docs`     | Documentation changes only — README updates, code comments, API docs. If you're not touching production code, it's `docs`. | 仅文档变更——README 更新、代码注释、API 文档。没碰生产代码的，就是 docs。 |
-| `style`    | Changes that don't affect the meaning of the code — formatting, missing semicolons, whitespace, linting fixes. No logic changes. | 不影响代码含义的改动——格式化、补分号、空白调整、lint 修复。不涉及逻辑变更。 |
+| `feat` | A new feature — something the user can now do that they couldn't before. Examples: adding a dark mode toggle, implementing a search bar, creating a new API endpoint. If you're introducing new capability, it's a feat. | 新功能——用户现在能做之前做不了的事。例子：增加暗色模式切换、实现搜索栏、创建新的 API 端点。凡是引入了新能力，就是 feat。 |
+| `fix` | A bug fix — something that was broken and is now repaired. Examples: fixing a 404 error on a valid route, correcting a miscalculation in a billing function, repairing a broken CSS layout on mobile. The key distinction from `feat` is that nothing new is added; existing broken behavior is corrected. | 修 bug —— 之前坏了、现在修好了。例子：修了一个有效路由却返回 404 的问题、纠正了计费函数里的计算错误、修复了移动端上坏掉的 CSS 布局。和 `feat` 的关键区别在于：没有新增任何东西，只是把已有的错误行为改正了。 |
+| `docs` | Documentation changes only — README updates, code comments, API docs. If you're not touching production code, it's `docs`. | 仅文档变更——README 更新、代码注释、API 文档。没碰生产代码的，就是 docs。 |
+| `style` | Changes that don't affect the meaning of the code — formatting, missing semicolons, whitespace, linting fixes. No logic changes. | 不影响代码含义的改动——格式化、补分号、空白调整、lint 修复。不涉及逻辑变更。 |
 | `refactor` | A code change that neither fixes a bug nor adds a feature — restructuring existing code without changing its external behavior. Renaming variables, extracting helper functions, simplifying control flow. If the user won't notice the difference but the code is cleaner, it's a refactor. | 既不是修 bug 也不是加功能的代码改动——在不变更外部行为的前提下重构已有代码。重命名变量、提取辅助函数、简化控制流。用户感觉不到差异但代码更干净了，就是 refactor。 |
-| `perf`     | A performance improvement. Making something faster or more memory-efficient without changing its behavior. | 性能优化。让东西变快或更省内存，不改行为。 |
-| `test`     | Adding or updating tests. No production code changes. | 添加或更新测试。不碰生产代码。 |
-| `chore`    | Everything else that doesn't fit — updating dependencies, changing build configuration, tweaking CI/CD pipelines. If it's maintenance work that users won't perceive directly, it's a chore. | 放不进其他类型的所有杂项——更新依赖、修改构建配置、调整 CI/CD 管道。用户直接感知不到的维护工作，就是 chore。 |
-| `ci`       | Changes to continuous integration configuration files and scripts — GitHub Actions workflows, Travis CI configs, etc. | 持续集成配置文件和脚本的变更——GitHub Actions 工作流、Travis CI 配置等。 |
-| `build`    | Changes that affect the build system or external dependencies — Webpack config, `package.json` dependency versions, Dockerfile tweaks. | 影响构建系统或外部依赖的变更——Webpack 配置、`package.json` 中的依赖版本、Dockerfile 调整。 |
+| `perf` | A performance improvement. Making something faster or more memory-efficient without changing its behavior. | 性能优化。让东西变快或更省内存，不改行为。 |
+| `test` | Adding or updating tests. No production code changes. | 添加或更新测试。不碰生产代码。 |
+| `chore` | Everything else that doesn't fit — updating dependencies, changing build configuration, tweaking CI/CD pipelines. If it's maintenance work that users won't perceive directly, it's a chore. | 放不进其他类型的所有杂项——更新依赖、修改构建配置、调整 CI/CD 管道。用户直接感知不到的维护工作，就是 chore。 |
+| `ci` | Changes to continuous integration configuration files and scripts — GitHub Actions workflows, Travis CI configs, etc. | 持续集成配置文件和脚本的变更——GitHub Actions 工作流、Travis CI 配置等。 |
+| `build` | Changes that affect the build system or external dependencies — Webpack config, `package.json` dependency versions, Dockerfile tweaks. | 影响构建系统或外部依赖的变更——Webpack 配置、`package.json` 中的依赖版本、Dockerfile 调整。 |
 
 When I'm unsure whether to choose `feat` or `fix`, I now ask myself one question: "Did this change introduce something new, or did it repair something that was already supposed to work?" New capability is `feat`; repaired behavior is `fix`. When a commit does both, that's a sign the commit is too large — which brings us to the next section.
 
@@ -65,7 +67,7 @@ This is my most confession-worthy Git sin. My habit has been to make a bunch of 
 
 这是我最值得忏悔的 Git 罪行。我的习惯是做了一堆互不相关的改动，跑一条 `git add .`，然后盯着暂存区发愁该怎么把这一团乱麻塞进一条 message。结果提交信息大概长这样：`feat: add search and fix navbar bug and update README`，对任何想理解项目历史的人——包括未来的我——都毫无用处。
 
-The principle is simple and universally agreed upon: one commit should do exactly one thing. If you fixed a bug, that's one commit. If you added a feature, that's another. If you updated documentation, that's a third. The challenge is not the principle — it's knowing the commands to actually *split* your changes.
+The principle is simple and universally agreed upon: one commit should do exactly one thing. If you fixed a bug, that's one commit. If you added a feature, that's another. If you updated documentation, that's a third. The challenge is not the principle — it's knowing the commands to actually _split_ your changes.
 
 原则很简单也无可争议：一次提交只做一件事。你修了一个 bug，就是一次提交。你加了一个功能，就是另一次提交。你更新了文档，就是第三次提交。挑战不在于原则本身，而在于真正*拆分*改动的命令。
 
@@ -110,9 +112,9 @@ Use this last one only when you're absolutely certain that every modification in
 
 ### 3.2 A More Advanced Splitting Technique: `git add -p` / 更专业的拆分技巧：`git add -p`
 
-There's an even finer-grained tool that deserves mention, even if I haven't made it part of my daily habit yet. `git add -p` (patch mode) walks you through each *hunk* of changes within a file, one at a time, and asks whether you want to stage it. This means you can commit *part* of a file's changes now, and the rest in a separate commit later. For the situation where you accidentally fixed a bug and added a feature in the same file, this is the escape hatch. The command is:
+There's an even finer-grained tool that deserves mention, even if I haven't made it part of my daily habit yet. `git add -p` (patch mode) walks you through each _hunk_ of changes within a file, one at a time, and asks whether you want to stage it. This means you can commit _part_ of a file's changes now, and the rest in a separate commit later. For the situation where you accidentally fixed a bug and added a feature in the same file, this is the escape hatch. The command is:
 
-还有一个更细粒度的工具值得一提，虽然我自己还没把它变成日常习惯。`git add -p`（patch 模式）会带着你逐块审查一个文件里的每一个 *hunk* 变更，并询问你是否暂存。这意味着你可以把一个文件里的*部分*改动先提交，剩下的放在另一个 commit 里。万一你不小心在同一个文件里既修了 bug 又加了功能，这就是你的逃生出口。命令如下：
+还有一个更细粒度的工具值得一提，虽然我自己还没把它变成日常习惯。`git add -p`（patch 模式）会带着你逐块审查一个文件里的每一个 _hunk_ 变更，并询问你是否暂存。这意味着你可以把一个文件里的*部分*改动先提交，剩下的放在另一个 commit 里。万一你不小心在同一个文件里既修了 bug 又加了功能，这就是你的逃生出口。命令如下：
 
 ```bash
 git add -p
@@ -149,24 +151,24 @@ This is slower than `git add .` in the moment, but it saves enormous time later 
 
 ## 4. Idiomatic Word Choice: Common Pitfalls for Native Chinese Speakers / 用词地道性：中文母语者的常见陷阱
 
-When I don't know how to phrase a commit message, I've often resorted to translation tools or asking an LLM to write it for me. While this works in the short term, it means I never actually learn *why* one phrasing is better than another. Below is a curated table of high-frequency Chinese terms that tend to produce awkward English when translated directly, along with their more natural Git-commit equivalents. These are words I expect to encounter regularly and want to get right.
+When I don't know how to phrase a commit message, I've often resorted to translation tools or asking an LLM to write it for me. While this works in the short term, it means I never actually learn _why_ one phrasing is better than another. Below is a curated table of high-frequency Chinese terms that tend to produce awkward English when translated directly, along with their more natural Git-commit equivalents. These are words I expect to encounter regularly and want to get right.
 
 当我不知道怎么写 commit message 时，常常求助于翻译工具或者让 LLM 代劳。短期来看这能解决问题，但代价是我从未真正学会*为什么*一种表达比另一种更好。下面是一张我整理的高频中文词汇表——这些词直译成英文往往很别扭——以及它们在 Git 提交语境中更自然的对应表达。这些都是我预料自己会频繁遇到、并想用对的词。
 
-| 中文（直译思维） | 不地道的英文（Avoid） | 地道的英文（Use Instead） | 使用场景说明 |
-|---|---|---|---|
-| 更新（了） | `update` | `update` 在多数语境下其实是对的，但需要注意搭配。如果说“更新了功能逻辑”，直接 `update logic` 太模糊。 | `update` is fine for docs, deps, and configs. For code behavior, be more specific: `refactor`, `fix`, `adjust`. |
-| 机制 | `mechanism` | `mechanism` 在英语中偏物理/机械，写代码时用 `logic`, `system`, `handler`, `workflow` 代替。例如“重写鉴权机制” → `refactor: rewrite auth logic` | 描述一整套工作方式时用 `logic` 或 `workflow`；描述一个处理模块时用 `handler`。 |
-| 逻辑 | `logic` | `logic` 本身没问题，但中文习惯说“修改某某逻辑”，直译 `modify xxx logic` 太泛。建议具体化：`simplify`, `extract`, `rework`, `fix edge case in` | 说清楚你*对逻辑做了什么*，而不只是说“改了逻辑”。 |
-| 改善 / 优化 | `improve / optimize` | 这两个词本身可用，但 `optimize` 在英语里暗示做了性能提升。如果没有 benchmark 支持，谨慎使用。一般性改进用 `improve`, `refine`, `clean up`。 | `perf:` 类型的 commit 才适合用 `optimize`；代码整理用 `refactor` 或 `clean up`。 |
-| 实现 / 完成 | `implement / complete` | `implement` 适合 `feat:` 类型，描述从头写一个功能。但如果只是“实现了剩下的部分”，用 `finish`, `add support for` 更自然。 | `complete` 一般不用在 message 里，因为它不传达*什么*被完成。 |
-| 修改 | `modify` | `modify` 可用但过于笼统。Git 的 diff 本身就在展示修改了什么，message 应该说明*改了什么、为什么*。 | 尽量用更具体的动词：`adjust`, `rework`, `rewrite`, `fix`, `remove`, `relocate`。 |
-| 新增 / 添加 | `add new` | 冗余！`add` 本身就意味着新增。`add new feature` → `feat: add feature` | “Add new” is a tautology. Just “add.” |
-| 删除 / 移除 | `delete` | `delete` 偏数据库操作（DELETE），代码中更常用 `remove`。例如“移除废弃的 API” → `remove deprecated API` | 只有真的在说删除数据时才用 `delete`；否则用 `remove` 或 `drop`。 |
-| 修复了一个...的 bug | `fixed a bug where...` | 这个结构可以用，但更简洁的写法是直接描述问题：`fix: crash on empty search input`，不需要 "fixed a bug where..." 的套话。 | 让 message 本身说明问题是什么，而不是声明“这是个 bug fix”。类型前缀 `fix:` 已经表明它是个修复。 |
-| 调整 | `adjust` | `adjust` 可以用，但同样的原则：说明调整了*什么*以及*为什么*。`adjust navbar styling for mobile` 比 `adjust UI` 好得多。 | 适合微调（参数、样式、阈值）；大改动用 `rework` 或 `refactor`。 |
-| 重构 | `refactor` | `refactor` 本身就是类型前缀，不需要在描述里再写一遍。`refactor: refactor auth module` 是冗余的。正确写法：`refactor: simplify auth module structure` | 在描述部分说清楚重构的具体动作和效果。 |
-| 依赖 | `dependencies` | 更新依赖时，英文明白人习惯说 `bump` 或 `update`。`chore: bump react to 19.0.0` 或 `chore: update dependencies`。 | `bump` 是升级版本号的惯用动词，非常地道。 |
+| 中文（直译思维）    | 不地道的英文（Avoid）  | 地道的英文（Use Instead）                                                                                                                            | 使用场景说明                                                                                                    |
+| ------------------- | ---------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------- |
+| 更新（了）          | `update`               | `update` 在多数语境下其实是对的，但需要注意搭配。如果说“更新了功能逻辑”，直接 `update logic` 太模糊。                                                | `update` is fine for docs, deps, and configs. For code behavior, be more specific: `refactor`, `fix`, `adjust`. |
+| 机制                | `mechanism`            | `mechanism` 在英语中偏物理/机械，写代码时用 `logic`, `system`, `handler`, `workflow` 代替。例如“重写鉴权机制” → `refactor: rewrite auth logic`       | 描述一整套工作方式时用 `logic` 或 `workflow`；描述一个处理模块时用 `handler`。                                  |
+| 逻辑                | `logic`                | `logic` 本身没问题，但中文习惯说“修改某某逻辑”，直译 `modify xxx logic` 太泛。建议具体化：`simplify`, `extract`, `rework`, `fix edge case in`        | 说清楚你*对逻辑做了什么*，而不只是说“改了逻辑”。                                                                |
+| 改善 / 优化         | `improve / optimize`   | 这两个词本身可用，但 `optimize` 在英语里暗示做了性能提升。如果没有 benchmark 支持，谨慎使用。一般性改进用 `improve`, `refine`, `clean up`。          | `perf:` 类型的 commit 才适合用 `optimize`；代码整理用 `refactor` 或 `clean up`。                                |
+| 实现 / 完成         | `implement / complete` | `implement` 适合 `feat:` 类型，描述从头写一个功能。但如果只是“实现了剩下的部分”，用 `finish`, `add support for` 更自然。                             | `complete` 一般不用在 message 里，因为它不传达*什么*被完成。                                                    |
+| 修改                | `modify`               | `modify` 可用但过于笼统。Git 的 diff 本身就在展示修改了什么，message 应该说明*改了什么、为什么*。                                                    | 尽量用更具体的动词：`adjust`, `rework`, `rewrite`, `fix`, `remove`, `relocate`。                                |
+| 新增 / 添加         | `add new`              | 冗余！`add` 本身就意味着新增。`add new feature` → `feat: add feature`                                                                                | “Add new” is a tautology. Just “add.”                                                                           |
+| 删除 / 移除         | `delete`               | `delete` 偏数据库操作（DELETE），代码中更常用 `remove`。例如“移除废弃的 API” → `remove deprecated API`                                               | 只有真的在说删除数据时才用 `delete`；否则用 `remove` 或 `drop`。                                                |
+| 修复了一个...的 bug | `fixed a bug where...` | 这个结构可以用，但更简洁的写法是直接描述问题：`fix: crash on empty search input`，不需要 "fixed a bug where..." 的套话。                             | 让 message 本身说明问题是什么，而不是声明“这是个 bug fix”。类型前缀 `fix:` 已经表明它是个修复。                 |
+| 调整                | `adjust`               | `adjust` 可以用，但同样的原则：说明调整了*什么*以及*为什么*。`adjust navbar styling for mobile` 比 `adjust UI` 好得多。                              | 适合微调（参数、样式、阈值）；大改动用 `rework` 或 `refactor`。                                                 |
+| 重构                | `refactor`             | `refactor` 本身就是类型前缀，不需要在描述里再写一遍。`refactor: refactor auth module` 是冗余的。正确写法：`refactor: simplify auth module structure` | 在描述部分说清楚重构的具体动作和效果。                                                                          |
+| 依赖                | `dependencies`         | 更新依赖时，英文明白人习惯说 `bump` 或 `update`。`chore: bump react to 19.0.0` 或 `chore: update dependencies`。                                     | `bump` 是升级版本号的惯用动词，非常地道。                                                                       |
 
 A few overarching principles I'm taking away from this table:
 
@@ -176,7 +178,7 @@ A few overarching principles I'm taking away from this table:
 
 原则一：动词要具体。Commit message 本身就是改动的摘要——不要用“修改”“调整”这类填充词让它更模糊。说清你实际做了什么：“提取”“重写”“移除”“简化”“修复某某崩溃”。
 
-**Principle 2: The prefix already signals the category.** If you write `fix:`, you don't need to also say "fixed a bug where..." in the description. The `fix:` prefix has already done that job. Let the description focus on the *what* and the *why*.
+**Principle 2: The prefix already signals the category.** If you write `fix:`, you don't need to also say "fixed a bug where..." in the description. The `fix:` prefix has already done that job. Let the description focus on the _what_ and the _why_.
 
 原则二：前缀已经表明类别。如果你写了 `fix:`，就不需要在描述里再说“修复了一个...的 bug”。`fix:` 前缀已经干了这活。让描述专注于*改了什么*和*为什么改*。
 
@@ -196,7 +198,7 @@ fix: prevent navbar overlap on mobile screens
 docs: update README with Docker setup instructions
 ```
 
-However, when a commit is significant — introducing a complex feature, touching many files, or implementing something whose *reasoning* isn't obvious from the diff alone — you should expand the message into three parts:
+However, when a commit is significant — introducing a complex feature, touching many files, or implementing something whose _reasoning_ isn't obvious from the diff alone — you should expand the message into three parts:
 
 然而，当一次提交比较重大——引入复杂功能、触及大量文件、或者实现的*原因*单看 diff 并不明显——就应该把 message 扩展成三部分：
 
@@ -284,7 +286,7 @@ After organizing all of this, I'm walking away with a personal checklist that I 
 5. **I will check my word choice against the pitfalls table in Section 4**, especially for the high-frequency offenders like "mechanism," "modify," and "optimize."
    我会对照第四节的地道用词表检查自己的措辞，尤其是“机制”“修改”“优化”这些高频踩坑词。
 
-6. **For significant features, I will write a body explaining the *why*.** The diff shows *what* changed; the message should explain the reasoning.
+6. **For significant features, I will write a body explaining the _why_.** The diff shows _what_ changed; the message should explain the reasoning.
    对重要的功能，我会写 body 解释*为什么*这么做。Diff 展示了*什么*变了，message 应该解释背后的原因。
 
 7. **I will treat `--amend` as a local-only tool and never amend pushed commits.**

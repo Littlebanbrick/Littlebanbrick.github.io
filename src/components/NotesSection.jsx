@@ -65,9 +65,23 @@ function NotesSection({ notes }) {
                 fontSize: "1.1rem",
                 fontWeight: "normal",
                 marginBottom: "0.25rem",
+                display: "flex",
+                alignItems: "center",
+                gap: "0.4rem",
               }}
             >
-              {note.title}
+              <span>{note.title}</span>
+              {note.pinned && (
+                <i
+                  className="fa-solid fa-thumbtack"
+                  style={{
+                    fontSize: "0.7rem",
+                    color: "var(--text-light)",
+                    opacity: 0.5,
+                    transform: "rotate(45deg)",
+                  }}
+                />
+              )}
             </h3>
             <p
               style={{
