@@ -1,9 +1,10 @@
 function Navigation({ activeSection, onSectionChange }) {
   const sections = [
+    { key: "welcome", label: "Welcome" },
     { key: "blog", label: "My Blog" },
     { key: "notes", label: "Study Notes" },
-    { key: "about", label: "About" },
     { key: "essays", label: "Essays" },
+    { key: "about", label: "About" },
   ];
 
   return (

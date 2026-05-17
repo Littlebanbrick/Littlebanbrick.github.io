@@ -4,6 +4,7 @@ import Navigation from "./Navigation";
 import BlogSection from "./BlogSection";
 import NotesSection from "./NotesSection";
 import AboutSection from "./AboutSection";
+import WelcomeSection from "./WelcomeSection";
 
 const studyGlob = import.meta.glob("../notes/study/*.md", {
   query: "?raw",
@@ -19,6 +20,11 @@ const blogGlob = import.meta.glob("../notes/blog/*.md", {
 });
 
 const aboutGlob = import.meta.glob("../notes/about/*.md", {
+  query: "?raw",
+  import: "default",
+});
+
+const welcomeGlob = import.meta.glob("../notes/welcome/*.md", {
   query: "?raw",
   import: "default",
 });
@@ -87,7 +93,7 @@ function ContentLayout({
   const [sidebarOpen, setSidebarOpen] = useState(true);
   const [showArrow, setShowArrow] = useState(false);
   const [showBackToTop, setShowBackToTop] = useState(false);
-  const [activeSection, setActiveSection] = useState("blog");
+  const [activeSection, setActiveSection] = useState("welcome");
   const contentRef = useRef(null);
   const mainRef = useRef(null);
 
@@ -117,6 +123,7 @@ function ContentLayout({
   const [essaysNotes, setEssaysNotes] = useState([]);
   const [blogContent, setBlogContent] = useState("");
   const [aboutContent, setAboutContent] = useState("");
+  const [welcomeContent, setWelcomeContent] = useState("");
 
   useEffect(() => {
     loadNotesFromGlob(studyGlob).then(setStudyNotes);
@@ -141,6 +148,16 @@ function ContentLayout({
       }
     };
     loadAbout();
+
+    // 加载 welcome 文件
+    const loadWelcome = async () => {
+      const entries = Object.entries(welcomeGlob);
+      if (entries.length > 0) {
+        const content = await entries[0][1]();
+        setWelcomeContent(content);
+      }
+    };
+    loadWelcome();
   }, []);
 
   // 动画过渡结束监听
@@ -298,6 +315,7 @@ function ContentLayout({
             <NotesSection notes={{ title: "Essays", items: essaysNotes }} />
           )}
           {activeSection === "about" && <AboutSection content={aboutContent} />}
+          {activeSection === 'welcome' && <WelcomeSection content={welcomeContent} />}
         </main>
 
         {/* Back to top — fixed to viewport */}
