@@ -37,7 +37,7 @@ function Cover({ stage, onCoverClick, onCoverExitEnd }) {
       style={{
         background: `
           linear-gradient(rgba(0,0,0,0.3), rgba(0,0,0,0.3)),
-          url('https://tiebapic.baidu.com/forum/pic/item/ba7cb531e924b8996b0e952728061d950a7bf642.jpg?tbpicau=2026-05-27-05_9b07e989cda2a902da48f83dbdcc31ec') center/cover no-repeat
+          url('/cover.jpg') center/cover no-repeat
         `,
         display: "flex",
         justifyContent: "center",
