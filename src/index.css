@@ -7,6 +7,22 @@
   box-sizing: border-box;
 }
 
+/* 针对所有渲染后的链接，保持黑白灰风格 */
+a,
+a:link,
+a:visited {
+  color: var(--text);
+  text-decoration: underline;
+  text-underline-offset: 2px;
+  transition: color 0.2s;
+}
+
+a:hover,
+a:active {
+  color: var(--text-light);
+  text-decoration: none;
+}
+
 :root {
   --bg: #fafafa;
   --bg-card: #ffffff;
