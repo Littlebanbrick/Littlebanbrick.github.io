@@ -75,9 +75,19 @@ function ContentLayout({
   toggleTheme,
   theme,
 }) {
+  const [sidebarOpen, setSidebarOpen] = useState(true);
   const [showArrow, setShowArrow] = useState(false);
   const [activeSection, setActiveSection] = useState("blog");
   const contentRef = useRef(null);
+
+  // 响应式边栏宽度
+  const [isMobile, setIsMobile] = useState(false);
+  useEffect(() => {
+    const check = () => setIsMobile(window.innerWidth <= 768);
+    check();
+    window.addEventListener("resize", check);
+    return () => window.removeEventListener("resize", check);
+  }, []);
 
   const [studyNotes, setStudyNotes] = useState([]);
   const [essaysNotes, setEssaysNotes] = useState([]);
@@ -179,16 +189,48 @@ function ContentLayout({
       >
         <aside
           style={{
-            width: "220px",
+            width: sidebarOpen ? (isMobile ? 160 : 220) + "px" : "32px",
             flexShrink: 0,
             borderRight: "1px solid var(--border)",
-            paddingRight: "1rem",
+            paddingRight: sidebarOpen ? (isMobile ? "0.5rem" : "1rem") : "0",
           }}
         >
-          <Navigation
-            activeSection={activeSection}
-            onSectionChange={setActiveSection}
-          />
+          <div
+            style={{
+              display: "flex",
+              justifyContent: sidebarOpen ? "flex-end" : "center",
+              padding: "0.75rem 0",
+            }}
+          >
+            <button
+              onClick={() => setSidebarOpen((prev) => !prev)}
+              title={sidebarOpen ? "收起边栏" : "展开边栏"}
+              style={{
+                background: "none",
+                border: "none",
+                cursor: "pointer",
+                color: "var(--text-light)",
+                fontSize: "1rem",
+                padding: "0.25rem",
+                borderRadius: "4px",
+                transition: "color 0.2s",
+              }}
+              onMouseEnter={(e) => (e.currentTarget.style.color = "var(--text)")}
+              onMouseLeave={(e) =>
+                (e.currentTarget.style.color = "var(--text-light)")
+              }
+            >
+              <i
+                className={`fa-solid fa-chevron-${sidebarOpen ? "left" : "right"}`}
+              ></i>
+            </button>
+          </div>
+          {sidebarOpen && (
+            <Navigation
+              activeSection={activeSection}
+              onSectionChange={setActiveSection}
+            />
+          )}
         </aside>
 
         <main style={{ flex: 1, overflow: "auto", paddingLeft: "1.5rem" }}>

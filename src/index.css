@@ -236,11 +236,6 @@ main::-webkit-scrollbar,
   #content-root {
     padding: 1rem 0.5rem;
   }
-  /* 侧边栏窄一些，导航按钮缩小 */
-  aside {
-    width: 160px !important;
-    padding-right: 0.5rem !important;
-  }
   /* 导航按钮内部间距调整 */
   nav button {
     padding: 0.5rem 0.75rem !important;
@@ -258,10 +253,6 @@ main::-webkit-scrollbar,
 
 /* 更小屏幕宽度 */
 @media (max-width: 480px) {
-  aside {
-    width: 120px !important;
-    padding-right: 0.25rem !important;
-  }
   nav button {
     padding: 0.4rem 0.5rem !important;
     font-size: 0.8rem !important;
@@ -277,4 +268,11 @@ main::-webkit-scrollbar,
     height: 2rem;
     font-size: 1rem;
   }
+}
+
+/* 侧边栏折叠动画 */
+aside {
+  transition: width 0.2s ease, padding-right 0.2s ease;
+  overflow: hidden;
+  white-space: nowrap;
 }
