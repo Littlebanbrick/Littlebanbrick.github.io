@@ -1,6 +1,6 @@
 # CI/CD Pipeline with GitHub Actions and ECS Deployment
 
-<!--此为预览-->
+ <!-- preview: 此为预览-->
 
 # 基于 GitHub Actions 与 ECS 部署的 CI/CD 流水线
 
