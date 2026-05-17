@@ -3,6 +3,7 @@ import Header from "./Header";
 import Navigation from "./Navigation";
 import BlogSection from "./BlogSection";
 import NotesSection from "./NotesSection";
+import AboutSection from "./AboutSection";
 
 const studyGlob = import.meta.glob("../notes/study/*.md", {
   query: "?raw",
@@ -13,6 +14,11 @@ const essaysGlob = import.meta.glob("../notes/essays/*.md", {
   import: "default",
 });
 const blogGlob = import.meta.glob("../notes/blog/*.md", {
+  query: "?raw",
+  import: "default",
+});
+
+const aboutGlob = import.meta.glob("../notes/about/*.md", {
   query: "?raw",
   import: "default",
 });
@@ -110,6 +116,7 @@ function ContentLayout({
   const [studyNotes, setStudyNotes] = useState([]);
   const [essaysNotes, setEssaysNotes] = useState([]);
   const [blogContent, setBlogContent] = useState("");
+  const [aboutContent, setAboutContent] = useState("");
 
   useEffect(() => {
     loadNotesFromGlob(studyGlob).then(setStudyNotes);
@@ -124,6 +131,16 @@ function ContentLayout({
       }
     };
     loadBlog();
+
+    // 加载 about 文件
+    const loadAbout = async () => {
+      const entries = Object.entries(aboutGlob);
+      if (entries.length > 0) {
+        const content = await entries[0][1]();
+        setAboutContent(content);
+      }
+    };
+    loadAbout();
   }, []);
 
   // 动画过渡结束监听
@@ -280,6 +297,7 @@ function ContentLayout({
           {activeSection === "essays" && (
             <NotesSection notes={{ title: "Essays", items: essaysNotes }} />
           )}
+          {activeSection === "about" && <AboutSection content={aboutContent} />}
         </main>
 
         {/* Back to top — fixed to viewport */}
