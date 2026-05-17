@@ -59,7 +59,7 @@ function Cover({ stage, onCoverClick, onCoverExitEnd }) {
             marginBottom: "1rem",
           }}
         >
-          Hello, world.
+          Learning. Building. Living.
         </h1>
         <p
           style={{

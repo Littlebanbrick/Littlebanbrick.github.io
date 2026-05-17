@@ -27,7 +27,7 @@
 
 <h3 style="margin-top: 2rem; margin-bottom: 0.2rem;">Essays</h3>
 <p style="color: #888; font-size: 0.95em; margin-top: 0;">
-  更长的思考：关于技术、设计，和那些让技术变得有人味的事物。<br/>
+  更长的思考：关于技术、设计，和那些让技术变得有人情味的事物。<br/>
   Longer reflections on technology, design, and the human side of it all.
 </p>
 
