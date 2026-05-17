@@ -196,6 +196,7 @@ function ContentLayout({
         style={{
           flex: 1,
           display: "flex",
+          overflow: "hidden",
           width: "100%",
           maxWidth: "1200px",
           margin: "0 auto",
@@ -213,27 +214,33 @@ function ContentLayout({
           <div
             style={{
               display: "flex",
-              justifyContent: "space-between",
+              justifyContent: sidebarOpen ? "space-between" : "center",
               alignItems: "center",
-              padding: "0 0 0.75rem 0",
+              padding: sidebarOpen ? "0 0 0.75rem 0" : "0.75rem 0",
               borderBottom: sidebarOpen ? "1px solid var(--border)" : "none",
               marginBottom: sidebarOpen ? "0.75rem" : "0",
             }}
           >
             {sidebarOpen && (
-              <span style={{ fontSize: "0.85rem", color: "var(--text-light)", lineHeight: 1 }}>
-                导航
+              <span
+                style={{
+                  fontSize: "0.85rem",
+                  color: "var(--text-light)",
+                  lineHeight: 1,
+                }}
+              >
+                Navigation
               </span>
             )}
             <button
               onClick={() => setSidebarOpen((prev) => !prev)}
-              title={sidebarOpen ? "收起边栏" : "展开边栏"}
+              title={sidebarOpen ? "Collapse sidebar" : "Expand sidebar"}
               style={{
                 background: "none",
                 border: "none",
                 cursor: "pointer",
                 color: "var(--text-light)",
-                fontSize: sidebarOpen ? "0.9rem" : "1rem",
+                fontSize: "1rem",
                 padding: "0.25rem",
                 borderRadius: "4px",
                 transition: "color 0.2s",
@@ -244,10 +251,8 @@ function ContentLayout({
                 (e.currentTarget.style.color = "var(--text-light)")
               }
             >
-              {sidebarOpen ? "收起" : ""}
               <i
                 className={`fa-solid fa-chevron-${sidebarOpen ? "left" : "right"}`}
-                style={{ marginLeft: sidebarOpen ? "0.3rem" : "0" }}
               ></i>
             </button>
           </div>
@@ -273,10 +278,10 @@ function ContentLayout({
 
         </main>
 
-        {/* 回到顶部按钮 — fixed 在 #content-root 外部，避免 transform 干扰 */}
+        {/* Back to top — fixed to viewport */}
         <button
           onClick={scrollToTop}
-          aria-label="回到顶部"
+          aria-label="Back to top"
           style={{
             position: "fixed",
             bottom: "1.5rem",
@@ -308,7 +313,7 @@ function ContentLayout({
           }}
         >
           <i className="fa-solid fa-arrow-up"></i>
-          回到顶部
+          Top
         </button>
       </div>
     </div>
