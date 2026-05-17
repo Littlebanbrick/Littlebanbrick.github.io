@@ -1,6 +1,6 @@
 # CI/CD Pipeline with GitHub Actions and ECS Deployment
 
- <!-- preview: 此为预览-->
+ <!-- preview: 在本文中，我将记录如何配置 CI/CD 流水线，使得当我向 GitHub 推送代码时，阿里云 ECS 实例上的个人博客网站能够自动重新构建并重启服务。-->
 
 # 基于 GitHub Actions 与 ECS 部署的 CI/CD 流水线
 

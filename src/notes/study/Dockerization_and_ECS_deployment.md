@@ -1,9 +1,12 @@
 # Dockerization and ECS deployment
+
+ <!-- preview: 在本文中，我将主要展示如何将个人博客网站 Docker 化，然后部署到 ECS 上。-->
+
 # Docker 化与 ECS 部署
 
 > **What is dockerization and ECS?**  
 > **什么是 Docker 化与 ECS？**
-> 
+>
 > **Docker:** A platform that packages applications and their dependencies into lightweight, isolated containers. A container shares the host OS kernel but runs in its own user space, **ensuring consistent behaviour across different machines**.  
 > **Docker：** 一个将应用及其依赖打包进轻量级、隔离的容器的平台。容器共享宿主操作系统的内核，但运行在自己的用户空间中，从而**确保在不同机器上行为一致**。
 >
@@ -13,16 +16,18 @@
 > **ECS (Elastic Compute Service):** An on‑demand virtual machine from Alibaba Cloud. You provision vCPUs, memory, and storage, then get full OS‑level root access over SSH. It’s “elastic” because you can resize it as needed and pay only for what you use.  
 > **ECS（弹性计算服务）：** 阿里云提供的按需虚拟机。你分配 vCPU、内存和存储，随后可通过 SSH 获得完整的操作系统级 root 权限。之所以称其为“弹性”，是因为你可以按需调整实例规格，并只为实际使用的资源付费。
 
-<span style="color:grey">In this doc, I will mainly show you how to dockerize and then deploy a personal blog website to the ECS.</span>   
+<span style="color:grey">In this doc, I will mainly show you how to dockerize and then deploy a personal blog website to the ECS.</span>  
 <span style="color:grey">在本文中，我将主要展示如何将个人博客网站 Docker 化，然后部署到 ECS 上。</span>
 
 ## Why dockerization?
+
 ## 为什么需要 Docker 化？
 
 I developed my personal blog website <span style="color:grey">littlebanbrick.cn</span> using FastAPI as the backend framework and React for the frontend. During local development, testing the site’s functionality required manually launching both services in separate terminals — running `uvicorn main:app --reload --host 0.0.0.0 --port 8000` for the backend and `npm run dev` for the frontend — a repetitive and error-prone workflow. Dockerization resolved these issues effectively: the entire codebase, together with all dependencies and config files, is packaged into container images. With a single `docker-compose up` command, both the frontend and backend services start in a unified, isolated environment, streamlining not only local testing but also the deployment process.  
 我使用 FastAPI 作为后端框架、React 作为前端，开发了个人博客网站 <span style="color:grey">littlebanbrick.cn</span>。在本地开发过程中，每次测试网站功能都需要在两个终端中分别手动启动服务——用 `uvicorn main:app --reload --host 0.0.0.0 --port 8000` 启动后端，用 `npm run dev` 启动前端——这一流程重复且容易出错。Docker 化有效地解决了这些问题：整个代码库连同所有依赖和配置文件被打包进容器镜像。只需一条 `docker-compose up` 命令，前端和后端服务便在一个统一、隔离的环境中同时启动，不仅简化了本地测试，也简化了部署流程。
 
 ## How to dockerize?
+
 ## 如何实现 Docker 化？
 
 Assume the entire project is organised as follows:  
@@ -133,7 +138,7 @@ services:
       - ADMIN_SECRET_KEY=${ADMIN_SECRET_KEY}
       - SENDER_EMAIL=${SENDER_EMAIL}
       - SENDER_AUTH_CODE=${SENDER_AUTH_CODE}
-      - ENV=development   # Temporarily
+      - ENV=development # Temporarily
     restart: unless-stopped
 
   frontend:
@@ -149,7 +154,6 @@ services:
 volumes:
   db_data:
   static_data:
-
 ```
 
 In addition, for the sake of simplicity during development, I consolidated all the steps required to regenerate a fresh container stack into a single PowerShell script (`.ps1`) designed for Windows environments:  
@@ -184,6 +188,7 @@ Through this script, the entire rebuild-and-launch workflow is reduced to a sing
 通过这个脚本，整个重新构建和启动流程被压缩为一条命令。它首先优雅地停止并移除所有正在运行的容器，删除旧的应用镜像（如镜像不存在则忽略错误），并清理 Docker 构建缓存，以防止过期的层污染新的构建。随后，前端的静态资源通过 `npm run build` 在本地编译，生成的生产文件在后续的 `docker compose build --no-cache` 步骤中被纳入前端 Docker 镜像——这样做避免了在最终镜像中携带完整的 Node.js 工具链。最后，服务以分离模式启动，网站即可在 `http://localhost` 访问。这一自动化消除了手动依次构建、清理和启动的重复操作，也成为连接本地开发与后续云部署到 ECS 的一座便捷桥梁。
 
 ## How to deploy it in an ECS?
+
 ## 如何部署到 ECS？
 
 Conceptually, deploying the containerised blog to an ECS instance is straightforward: lease a cloud server, install the Docker engine, pull the source code, build the images on the server, and start the stack. Since the project was already version‑controlled on GitHub, I avoided copying pre‑built images or the project directory manually — the entire deployment could be bootstrapped directly from the remote repository.  
@@ -196,74 +201,82 @@ I provisioned an Alibaba Cloud ECS instance running **Ubuntu 22.04 (64‑bit)**,
     I accessed the instance via SSH using the key pair assigned during creation. Once logged in, I installed Docker Engine and Docker Compose using the official Docker repositories, ensuring the same toolchain as the local development environment was available. Enter and execute the following commands in the terminal:  
    **连接并准备服务器。**  
     我通过创建时分配的密钥对，使用 SSH 登录实例。登录后，我使用 Docker 官方仓库安装了 Docker Engine 和 Docker Compose，确保服务器拥有与本地开发环境相同的工具链。在终端中输入并执行以下命令：
-    ```powershell
-    ssh root@my.actual.public.ip
 
-    apt update && apt upgrade -y    # Update the system pack. 更新系统包。
+   ```powershell
+   ssh root@my.actual.public.ip
 
-    curl -fsSL https://get.docker.com | bash    # Install Docker. 下载 Docker。
+   apt update && apt upgrade -y    # Update the system pack. 更新系统包。
 
-    apt install -y docker-compose-plugin        # Install Docker Compose plugins. 安装 Docker Compose 插件。
+   curl -fsSL https://get.docker.com | bash    # Install Docker. 下载 Docker。
 
-    # Create a new user and add it to the docker group. 创建新用户并加入 docker 组。
-    adduser yourname
-    usermod -aG sudo yourname
-    usermod -aG docker yourname
+   apt install -y docker-compose-plugin        # Install Docker Compose plugins. 安装 Docker Compose 插件。
 
-    exit
+   # Create a new user and add it to the docker group. 创建新用户并加入 docker 组。
+   adduser yourname
+   usermod -aG sudo yourname
+   usermod -aG docker yourname
 
-    # Then login as the new user just created. 用新用户重新登录。
-    ssh yourname@my.actual.public.ip
+   exit
 
-    # Configure firewall. 配置防火墙。
-    sudo ufw allow 22
-    sudo ufw allow 80
-    sudo ufw allow 443
-    sudo ufw enable
-    ```
+   # Then login as the new user just created. 用新用户重新登录。
+   ssh yourname@my.actual.public.ip
 
-    Notice: During the initial SSH login process to an instance, you may encounter an issue where only SSH key login is currently allowed (on Alibaba Cloud). My solution to this is logging in through VNC and:  
+   # Configure firewall. 配置防火墙。
+   sudo ufw allow 22
+   sudo ufw allow 80
+   sudo ufw allow 443
+   sudo ufw enable
+   ```
+
+   Notice: During the initial SSH login process to an instance, you may encounter an issue where only SSH key login is currently allowed (on Alibaba Cloud). My solution to this is logging in through VNC and:  
     注意：初次SSH登录实例过程中可能会遇到当前只允许通过SSH密钥登录的问题（阿里云），对此我的解决办法是通过VNC登录，然后：
-    ```bash
-    passwd root  # Setup or change the password. 设置或更改你的密码。
 
-    sed -i 's/^PasswordAuthentication no/PasswordAuthentication yes/' /etc/ssh/sshd_config  # Ensure password logging in is allowed. 确保SSH允许密码登录
-    systemctl restart sshd
-    ```
-    At last, quit from VNC terminal.  
+   ```bash
+   passwd root  # Setup or change the password. 设置或更改你的密码。
+
+   sed -i 's/^PasswordAuthentication no/PasswordAuthentication yes/' /etc/ssh/sshd_config  # Ensure password logging in is allowed. 确保SSH允许密码登录
+   systemctl restart sshd
+   ```
+
+   At last, quit from VNC terminal.  
     最后退出VNC。
 
 2. **Pull the source code.**  
     The entire project — the `my-blog/` directory containing the backend, frontend, and root‑level Docker Compose configuration — resided in a GitHub repository. I cloned it directly onto the ECS instance:  
    **拉取源代码。**  
     整个项目——包含后端、前端以及根目录下的 Docker Compose 配置的 `my-blog/` 目录——存放在 GitHub 仓库中。我将其直接克隆到 ECS 实例上：
-    ```bash
-    git clone https://github.com/littlebanbrick/my-blog.git
-    cd my-blog
-    ```
+
+   ```bash
+   git clone https://github.com/littlebanbrick/my-blog.git
+   cd my-blog
+   ```
 
 3. **Build the container images on the server.**  
     Because a `docker-compose.yml` file was already present and configured correctly, building the images required a single command. During the build process, Docker automatically pulls the specified base images (e.g., `python:3.11-slim`, `node:18-alpine`) from the public registry, installs dependencies, and produces the final application images for the backend and frontend:  
    **在服务器上构建容器镜像。**  
     由于 `docker-compose.yml` 文件已经存在且配置正确，只需一条命令即可完成镜像构建。在构建过程中，Docker 会自动从公共仓库拉取指定的基础镜像（如 `python:3.11-slim`、`node:18-alpine`），安装依赖，并生成后端与前端的最终应用镜像：
-    ```bash
-    docker compose build --no-cache
-    ```
-    The `--no-cache` flag guaranteed that old layers would not pollute the production images, yielding clean, reproducible builds every time.
-    `--no-cache` 参数确保旧的构建层不会污染生产镜像，每次都能得到干净、可复现的构建结果。
+
+   ```bash
+   docker compose build --no-cache
+   ```
+
+   The `--no-cache` flag guaranteed that old layers would not pollute the production images, yielding clean, reproducible builds every time.
+   `--no-cache` 参数确保旧的构建层不会污染生产镜像，每次都能得到干净、可复现的构建结果。
 
 4. **Start the application stack.**  
     With the images built, I launched the services in detached mode so they would persist after the SSH session ended:  
    **启动应用栈。**  
     镜像构建完成后，我以分离模式启动服务，使它们在 SSH 会话结束后仍能继续运行：
-    ```bash
-    docker compose up -d
-    ```
-    The frontend’s Nginx container was bound to port 80 on the host, while the backend listened on its internal port 8000, accessible only within the Docker network.
-    前端的 Nginx 容器绑定到主机的 80 端口，后端则监听其内部端口 8000，仅限 Docker 网络内部访问。
 
-    Or rather more simply, write a bash script as the `update.ps1` before to execute all the commands above automatically.
-    或者更简单的方式是，像之前的 `update.ps1` 那样编写一个 bash 脚本，自动执行上述所有命令。
+   ```bash
+   docker compose up -d
+   ```
+
+   The frontend’s Nginx container was bound to port 80 on the host, while the backend listened on its internal port 8000, accessible only within the Docker network.
+   前端的 Nginx 容器绑定到主机的 80 端口，后端则监听其内部端口 8000，仅限 Docker 网络内部访问。
+
+   Or rather more simply, write a bash script as the `update.ps1` before to execute all the commands above automatically.
+   或者更简单的方式是，像之前的 `update.ps1` 那样编写一个 bash 脚本，自动执行上述所有命令。
 
 5. **Expose the service to the Internet.**  
     By default, the ECS security group blocks all inbound traffic. I added rules to allow TCP connections on port 80 (HTTP) from source `0.0.0.0/0`. Later, when SSL was configured, port 443 was also opened.  
@@ -281,6 +294,7 @@ This workflow directly mirrors the local development pattern: the same `docker c
 <br>
 
 ---
+
 <br>
 
 <span style="color:grey">The following appendix was generated by a large language model based on my real experiences during the development process.  
@@ -288,6 +302,7 @@ This workflow directly mirrors the local development pattern: the same `docker c
 <br>
 
 ## Appendix1: About "When to dockerize?"
+
 ## 附录1：关于“何时开始 Docker 化？”
 
 The experience of retrofitting an existing codebase for containerization often raises a natural question: would it have been better to containerize from the very beginning? The answer is more nuanced than a simple yes or no.  
@@ -303,6 +318,7 @@ A highly effective workflow for a project is to prototype the first critical fea
 对于一个项目，一种高效的流程是：先在裸机上把首批关键功能跑通（大约一到两天），然后立即创建一个面向开发的 Docker Compose 文件，将本地代码通过卷挂载到容器中，并保留热重载能力。这种“开发容器”的方法，把环境一致性与快速迭代结合了起来。在项目功能完成后，只需最小的工作量——通常只是将开发服务器更换为静态文件服务器或生产级 ASGI 运行器——就能从开发版 Dockerfile 派生出生产版。这条经验很清楚：尽早容器化，让容器塑造开发习惯；但不要太早，以免阻碍最初的学习与探索。
 
 ## Appendix2: Issues about ICP Filing in China mainland
+
 ## 附录2：关于中国大陆地区 ICP 备案诸事项
 
 If you choose to host a personal blog on a cloud server located in the Chinese mainland (such as an Alibaba Cloud ECS instance) and use a domain name registered or administered under Chinese regulations (e.g., `.cn` or `.com.cn` domains), you are legally required to complete **ICP Filing (Internet Content Provider Filing)** before the website can be accessed publicly.  

@@ -1,4 +1,7 @@
 # MCP-Enabled Agent for Auto-Posting and AI-Generated GitHub Trending Analysis
+
+ <!-- preview: 在本文中，我将展示如何构建一个 MCP 工具，使我能够通过自然语言直接在 Cursor 中发布博客帖子。同时，我也会详细说明一个定时流水线，它每天（北京时间午夜）自动抓取 GitHub Trending 仓库、使用 DeepSeek 生成总结并更新博客。-->
+
 # 基于 MCP 的 Agent 自动发帖与 AI 生成 GitHub Trending 分析
 
 > **What is MCP (Model Context Protocol)?**  
@@ -11,15 +14,17 @@
 <span style="color:grey">在本文中，我将展示如何构建一个 MCP 工具，使我能够通过自然语言直接在 Cursor 中发布博客帖子。同时，我也会详细说明一个定时流水线，它每天（北京时间午夜）自动抓取 GitHub Trending 仓库、使用 DeepSeek 生成总结并更新博客。</span>
 
 ## Why MCP and automated trending posts?
+
 ## 为什么需要 MCP 和自动化 Trending 帖子？
 
-Previously, publishing a blog post required logging into a custom admin panel, filling a form, and manually handling CSRF tokens. This broke the writing flow — switching from the editor to a browser, copy‑pasting Markdown, and verifying the result. With an MCP‑exposed endpoint and a simple tool definition, I can now type a sentence like *“Post a new article titled ‘Hello World’ with preview ‘This is a test’”* directly in Cursor’s chat, and the post appears on my blog seconds later. The agent handles authentication, HTTP calls, and error reporting automatically.  
-此前，发布一篇博客需要登录自定义管理后台，填写表单并手动处理 CSRF 令牌。这打断了写作流——从编辑器切换到浏览器，复制粘贴 Markdown，再验证结果。有了 MCP 暴露的端点和一个简单的工具定义，我现在可以直接在 Cursor 的对话中输入 *“Post a new article titled ‘Hello World’ with preview ‘This is a test’”*，几秒钟后帖子就出现在我的博客上。Agent 可以自动处理认证、HTTP 调用和错误报告。
+Previously, publishing a blog post required logging into a custom admin panel, filling a form, and manually handling CSRF tokens. This broke the writing flow — switching from the editor to a browser, copy‑pasting Markdown, and verifying the result. With an MCP‑exposed endpoint and a simple tool definition, I can now type a sentence like _“Post a new article titled ‘Hello World’ with preview ‘This is a test’”_ directly in Cursor’s chat, and the post appears on my blog seconds later. The agent handles authentication, HTTP calls, and error reporting automatically.  
+此前，发布一篇博客需要登录自定义管理后台，填写表单并手动处理 CSRF 令牌。这打断了写作流——从编辑器切换到浏览器，复制粘贴 Markdown，再验证结果。有了 MCP 暴露的端点和一个简单的工具定义，我现在可以直接在 Cursor 的对话中输入 _“Post a new article titled ‘Hello World’ with preview ‘This is a test’”_，几秒钟后帖子就出现在我的博客上。Agent 可以自动处理认证、HTTP 调用和错误报告。
 
 The second part — automated GitHub Trending summaries — grew from a desire to keep the blog fresh without routine manual effort. By combining web scraping, a large language model (DeepSeek), and the same internal blog API, the site now re‑publishes a daily “🤖 GitHub Trending Today” post every midnight. Readers get a concise, AI‑written summary of the top three trending repositories, and I get a set‑and‑forget content pipeline.  
 第二部分——自动化 GitHub Trending 总结——源于希望博客能保持新鲜感而无须日常手工操作。通过将网页抓取、大语言模型（DeepSeek）和同一个内部博客 API 组合起来，网站现在每天午夜重新发布一篇“🤖 GitHub Trending Today”帖子。读者可以得到由 AI 撰写的前三个热门仓库的简洁总结，而我则拥有了一条设置好即可忘掉的内容流水线。
 
 ## Exposing a blog‑posting tool via MCP
+
 ## 通过 MCP 暴露博客发布工具
 
 ### 1. The MCP Server (server.py) / MCP 服务器（server.py）
@@ -103,6 +108,7 @@ Cursor 的 MCP 集成通过一个 JSON 文件（通常是 `mcp.json`）进行配
 **使用流程：** 当我让 Cursor 的 Agent“创建一个标题为 X、内容为 Y 的帖子”时，Agent 发现 `create_blog_post` 工具，提示我补充缺失的参数，然后执行调用。在初次测试中，内建 MCP 桥接报告了代理配置错误，因此回退路径直接从脚本执行了相同的 HTTP 逻辑——但工具集成端到端仍然正常工作。
 
 ## Automating GitHub Trending summaries
+
 ## 自动化 GitHub Trending 总结
 
 ### 1. Fetching trending repositories / 抓取 Trending 仓库
@@ -176,6 +182,7 @@ async def trending_scheduler():
 ```
 
 ## Appendix1: Extending the system — ideas and future-proofing
+
 ## 附录1：扩展系统——灵感与预留设计
 
 The current MCP setup is intentionally minimal — it only creates posts. However, the protocol is designed for growth. Possible future tools include:  
@@ -197,6 +204,7 @@ The daily trending pipeline is already self‑contained and resilient: failures 
 每日 Trending 流水线已自成一体且具备韧性：异常被捕获并记录，调度器永不退出。未来的增强功能可以包括在总结帖子发布后发送 webhook 通知，或在每日总结之外扩展出每周/每月的趋势总结。
 
 ## Appendix2: Choosing an MCP Tool and Framework
+
 ## 附录2：MCP 工具与框架的选择
 
 A natural question that arises from this project is: why use Cursor's built‑in MCP agent instead of **Claude Code**, which is often cited as a superior terminal‑native coding agent? The answer, for this particular setup, involves a mix of practical constraints and a broader survey of the MCP ecosystem.  

@@ -1,5 +1,7 @@
 # Frontend Learning Notes: Starting from My Personal Blog Project
 
+ <!-- preview: 一些动态个人博客前端开发过程中的记录-->
+
 # 前端学习笔记：从我的博客项目说起
 
 ### Project Origins and First Impressions

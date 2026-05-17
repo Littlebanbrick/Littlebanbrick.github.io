@@ -1,4 +1,7 @@
 # Learning Notes on Vibe Coding
+
+ <!-- preview: 怎么Vibe Coding？这是一个值得思考的问题！-->
+
 # Vibe Coding 学习笔记
 
 ## 1. A Short Definition / 简短的定义
@@ -7,7 +10,7 @@ Vibe coding is a development paradigm coined by Andrej Karpathy in February 2025
 
 Vibe coding 这个概念由 Andrej Karpathy 于 2025 年 2 月提出。它的核心非常简单：你用自然语言描述你想要什么，AI 代理替你生成、运行、迭代代码。用 Karpathy 的原话说就是"完全交给感觉，拥抱指数曲线，甚至忘记代码的存在"。开发者的角色从亲自写每一行代码，转变为通过对话和反馈来引导最终结果。
 
-A critical nuance here — one that distinguishes *real* vibe coding from everyday AI-assisted development — is that in its purest form, you don't read the diffs. You don't review every generated line. You just copy-paste error messages back into the chat without comment and let the model fix itself.Whether this extreme is a good idea depends heavily on context, which is exactly what we'll discuss in Section 3.
+A critical nuance here — one that distinguishes _real_ vibe coding from everyday AI-assisted development — is that in its purest form, you don't read the diffs. You don't review every generated line. You just copy-paste error messages back into the chat without comment and let the model fix itself.Whether this extreme is a good idea depends heavily on context, which is exactly what we'll discuss in Section 3.
 
 这里有一个关键的区分点——真正的 vibe coding 和你日常看到的 AI 辅助开发不一样——在纯粹形态下，你不会去读 diff，不会逐行审查生成出来的代码。你只是把报错信息原样粘贴回对话框，不加任何评论，让模型自己去修。这个极端做法好不好，完全取决于具体场景，这恰恰是本文第三节要深入讨论的问题。
 
@@ -33,11 +36,11 @@ The blunt truth: I refuse to romanticize the act of typing thousands of lines of
 
 **第二点：在学习基础时，vibe coding 可能是个危险的捷径。**
 
-This is where I draw a hard line. In my university coursework — data structures and algorithms, taught entirely in C — I have a strict personal policy shaped by academic integrity rules as well as common sense: I might ask an LLM to *design* an algorithm, or to explain *why* a particular data structure works the way it does, but the actual implementation and the deep understanding? Those are mine to build, line by line, with my own hands and my own brain.
+This is where I draw a hard line. In my university coursework — data structures and algorithms, taught entirely in C — I have a strict personal policy shaped by academic integrity rules as well as common sense: I might ask an LLM to _design_ an algorithm, or to explain _why_ a particular data structure works the way it does, but the actual implementation and the deep understanding? Those are mine to build, line by line, with my own hands and my own brain.
 
-这是我画下的硬边界。在学校的数据结构与算法课程（全程用 C 语言）中，受学术诚信条款和我自己的判断约束，我有一个严格的个人准则：我可以让大模型帮我 *设计* 一个算法，或者解释某个数据结构*为什么*这样工作，但真正的代码实现和深层理解，必须由我自己一行一行地写，用我自己的手和脑子来完成。
+这是我画下的硬边界。在学校的数据结构与算法课程（全程用 C 语言）中，受学术诚信条款和我自己的判断约束，我有一个严格的个人准则：我可以让大模型帮我 _设计_ 一个算法，或者解释某个数据结构*为什么*这样工作，但真正的代码实现和深层理解，必须由我自己一行一行地写，用我自己的手和脑子来完成。
 
-Why? Because data structures and algorithms are not boilerplate. They demand a solid mathematical foundation, genuine computer science literacy, and the kind of mental muscle that only develops through struggle. The biggest fear I have with vibe coding is not that it produces bad code — it's that it produces *working* code that I *think* I understand but actually don't. Researchers have already flagged this: students who rely too heavily on AI-generated code can demonstrate a working product but struggle to explain how it works — a gap that gets brutally exposed in technical interviews.Employers are noticing the same thing: they want engineers who can prototype fast with AI but can also repair and optimize manually when needed.
+Why? Because data structures and algorithms are not boilerplate. They demand a solid mathematical foundation, genuine computer science literacy, and the kind of mental muscle that only develops through struggle. The biggest fear I have with vibe coding is not that it produces bad code — it's that it produces _working_ code that I _think_ I understand but actually don't. Researchers have already flagged this: students who rely too heavily on AI-generated code can demonstrate a working product but struggle to explain how it works — a gap that gets brutally exposed in technical interviews.Employers are noticing the same thing: they want engineers who can prototype fast with AI but can also repair and optimize manually when needed.
 
 为什么？因为数据结构和算法不是样板代码。它们需要比较扎实的数学基础和计算机科学素养，以及那种只有在亲手挣扎中才能练出来的脑力肌肉。我对 vibe coding 最大的恐惧，不是它产生糟糕的代码，而是它产生*能跑通*的代码，而我*以为*自己看懂了、实际上完全没吃透。已经有人警告过这种风险：过度依赖 AI 生成代码的学生，能展示一个能跑的产品，却很难解释它怎么工作——这个差距在技术面试中会被无情地暴露出来。企业的反馈也一样：他们想要的是能用 AI 快速原型、同时也能手动修复和优化的工程师。
 
@@ -49,7 +52,7 @@ If Point 1 represents my pragmatic side and Point 2 represents my cautious side,
 
 如果说第一点代表了我的务实面，第二点代表了我的审慎面，那么我实际落地的方式就是这个合题：在启动一个业余项目时，我会先让 agent（我的主力是 deepseek-v4-pro，通过 DeepSeek TUI 调用 API）把整个代码库生成出来，形成一个能跑的骨架，然后再亲自去看那些必然不够完美的部分——理解其中的逻辑，追踪数据流向，该手改的手改。Agent 写的是第一稿，但我是那个在出版前认真理解每一个句子的编辑。
 
-This isn't a novel idea — Karpathy himself has described a layered structure where Cursor handles the frequent, local edits (his estimated ~75% of coding tasks), while Claude Code or Codex handles larger feature implementation, and a more powerful model like GPT-5 Pro is reserved for the hardest bugs and deep conceptual work.The principle is the same: match the tool to the task, and never confuse *code that runs* with *code you own*.
+This isn't a novel idea — Karpathy himself has described a layered structure where Cursor handles the frequent, local edits (his estimated ~75% of coding tasks), while Claude Code or Codex handles larger feature implementation, and a more powerful model like GPT-5 Pro is reserved for the hardest bugs and deep conceptual work.The principle is the same: match the tool to the task, and never confuse _code that runs_ with _code you own_.
 
 这个思路其实并不新鲜——Karpathy 本人也总结过一套三层结构：Cursor 负责最频繁的局部补全和修改（据他估计占编程任务的 ~75%），Claude Code/Codex 负责较大的功能块实现，GPT-5 Pro 则保留给最难啃的 bug 和深度概念性工作。背后的原则是一致的：让工具匹配任务，永远不要把"能跑的代码"和"你真正拥有的代码"混为一谈。
 
@@ -63,7 +66,7 @@ This section draws from both my own trial-and-error experience and the best prac
 
 **原则一：意图先行。描述你要的结果，而不是实现方式。**
 
-When vibe coding, you should express *what* you want, not *how* to do it. Tell the AI "I need a numbered delete flow with confirmation," not "add a for loop that iterates over the array and calls the remove function." The whole point of vibe coding is that the AI handles the how — your job is to define the what and then evaluate whether the result meets your intent.
+When vibe coding, you should express _what_ you want, not _how_ to do it. Tell the AI "I need a numbered delete flow with confirmation," not "add a for loop that iterates over the array and calls the remove function." The whole point of vibe coding is that the AI handles the how — your job is to define the what and then evaluate whether the result meets your intent.
 
 Vibe coding 时，你应该表达*要什么*，而不是*怎么做*。告诉 AI"我需要一个带编号的删除流程，删除前有确认步骤"，而不是"加一个 for 循环遍历数组然后调用 remove 函数"。让 AI 处理"怎么做"，你的工作是定义"要什么"，然后判断结果是否符合你的意图。
 
