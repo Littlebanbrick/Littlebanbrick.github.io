@@ -158,7 +158,7 @@ function ContentLayout({
           />
         </aside>
 
-        <main style={{ flex: 1, overflow: "auto" }}>
+        <main style={{ flex: 1, overflow: "auto", paddingLeft: "1.5rem" }}>
           {activeSection === "blog" && <BlogSection content={blogContent} />}
           {activeSection === "notes" && (
             <NotesSection notes={{ title: "Study Notes", items: studyNotes }} />

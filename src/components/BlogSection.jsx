@@ -1,5 +1,6 @@
 import ReactMarkdown from 'react-markdown';
 import rehypeRaw from 'rehype-raw';
+import remarkGfm from 'remark-gfm';
 import CardLink from './CardLink';
 
 function BlogSection({ content }) {
@@ -11,8 +12,8 @@ function BlogSection({ content }) {
         description="Visit littlebanbrick.cn"
       />
       <div style={{ marginTop: '2rem' }}>
-        <div style={{ lineHeight: 1.8, color: 'var(--text)' }}>
-          <ReactMarkdown rehypePlugins={[rehypeRaw]}>
+        <div className="markdown-body" style={{ lineHeight: 1.8, color: 'var(--text)' }}>
+          <ReactMarkdown rehypePlugins={[rehypeRaw]} remarkPlugins={[remarkGfm]}>
             {content}
           </ReactMarkdown>
         </div>
