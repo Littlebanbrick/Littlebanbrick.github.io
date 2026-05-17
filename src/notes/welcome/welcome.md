@@ -9,28 +9,32 @@
 
 </div>
 
----
+<br>
 
 <div style="max-width: 650px; margin: 0 auto;">
 
 <h3 style="margin-bottom: 0.2rem;">My Blog</h3>
 <p style="color: #888; font-size: 0.95em; margin-top: 0;">
-  生活中的零碎记录。Slices of everyday life.
+  生活中的零碎记录。<br/>
+  Slices of everyday life.
 </p>
 
 <h3 style="margin-top: 2rem; margin-bottom: 0.2rem;">Study Notes</h3>
 <p style="color: #888; font-size: 0.95em; margin-top: 0;">
-  计算机科学的学习笔记。What I'm learning in CS.
+  计算机科学的学习笔记。<br/>
+  What I'm learning in CS.
 </p>
 
 <h3 style="margin-top: 2rem; margin-bottom: 0.2rem;">Essays</h3>
 <p style="color: #888; font-size: 0.95em; margin-top: 0;">
-  更长的思考：关于技术、设计，和那些让技术变得有人味的事物。Longer reflections on technology, design, and the human side of it all.
+  更长的思考：关于技术、设计，和那些让技术变得有人味的事物。<br/>
+  Longer reflections on technology, design, and the human side of it all.
 </p>
 
 <h3 style="margin-top: 2rem; margin-bottom: 0.2rem;">About</h3>
 <p style="color: #888; font-size: 0.95em; margin-top: 0;">
-  我是谁，如何找到我。Who I am, and how to reach me.
+  我是谁，如何找到我。<br/>
+  Who I am, and how to reach me.
 </p>
 
 </div>
