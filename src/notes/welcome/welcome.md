@@ -1,43 +1,36 @@
-<div align="center">
+<div Align="center" style="margin-bottom: 2rem;">
 
-## Welcome!
+# Welcome!
 
-<p style="color: #777; max-width: 600px; margin: 0 auto 2rem auto;">
-  This is my digital garden — a place for notes, stories, and quiet experiments.
+<p style="color: #777; max-width: 600px; margin: 1rem auto;">
+  这里是一个让文字和代码缓慢生长的地方。<br/>
+  This is a place where words and code grow slowly.
 </p>
 
-<div style="margin: 2rem 0;">
-  <h3 style="margin-bottom: 0.2rem;">📔 My Blog</h3>
-  <p style="color: #888; font-size: 0.95em; margin-top: 0;">
-    Slices of everyday life, travel, and personal reflections.
-  </p>
-</div>
-
-<div style="margin: 2rem 0;">
-  <h3 style="margin-bottom: 0.2rem;">📚 Study Notes</h3>
-  <p style="color: #888; font-size: 0.95em; margin-top: 0;">
-    What I'm currently learning in computer science — concepts, code, and curiosities.
-  </p>
-</div>
-
-<div style="margin: 2rem 0;">
-  <h3 style="margin-bottom: 0.2rem;">✍️ Essays</h3>
-  <p style="color: #888; font-size: 0.95em; margin-top: 0;">
-    Longer thoughts on design, technology, and the human side of software.
-  </p>
-</div>
-
-<div style="margin: 2rem 0;">
-  <h3 style="margin-bottom: 0.2rem;">🙋‍♂️ About</h3>
-  <p style="color: #888; font-size: 0.95em; margin-top: 0;">
-    Who I am, what I do, and how to get in touch.
-  </p>
 </div>
 
 ---
 
-<p style="color: #aaa; font-size: 0.9em; margin-top: 2rem;">
-  Feel free to explore. Every note is a work in progress, just like me.
+<div style="max-width: 650px; margin: 0 auto;">
+
+<h3 style="margin-bottom: 0.2rem;">My Blog</h3>
+<p style="color: #888; font-size: 0.95em; margin-top: 0;">
+  生活中的零碎记录。Slices of everyday life.
+</p>
+
+<h3 style="margin-top: 2rem; margin-bottom: 0.2rem;">Study Notes</h3>
+<p style="color: #888; font-size: 0.95em; margin-top: 0;">
+  计算机科学的学习笔记。What I'm learning in CS.
+</p>
+
+<h3 style="margin-top: 2rem; margin-bottom: 0.2rem;">Essays</h3>
+<p style="color: #888; font-size: 0.95em; margin-top: 0;">
+  更长的思考：关于技术、设计，和那些让技术变得有人味的事物。Longer reflections on technology, design, and the human side of it all.
+</p>
+
+<h3 style="margin-top: 2rem; margin-bottom: 0.2rem;">About</h3>
+<p style="color: #888; font-size: 0.95em; margin-top: 0;">
+  我是谁，如何找到我。Who I am, and how to reach me.
 </p>
 
 </div>
