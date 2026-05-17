@@ -1,9 +1,12 @@
 # CI/CD Pipeline with GitHub Actions and ECS Deployment
+
 # 基于 GitHub Actions 与 ECS 部署的 CI/CD 流水线
+
+<!--此为预览-->
 
 > **What is CI/CD and GitHub Actions?**  
 > **什么是 CI/CD 与 GitHub Actions？**
-> 
+>
 > **CI/CD:** An acronym for Continuous Integration and Continuous Delivery (or Deployment). CI refers to the practice of automatically integrating code changes from multiple contributors into a shared repository and verifying them through builds and tests. CD extends this by automating the delivery of verified code to a target environment. Together, they form a pipeline that takes source code from a commit to a live service without manual intervention.  
 > **CI/CD：** 持续集成（Continuous Integration）与持续交付/部署（Continuous Delivery/Deployment）的缩写。CI 指自动将多个贡献者的代码变更集成到共享仓库，并通过构建和测试进行验证的实践。CD 则进一步将验证通过的代码自动交付到目标环境。二者共同构成一条将源代码从提交变为线上服务的自动化流水线。
 >
@@ -17,6 +20,7 @@
 <span style="color:grey">在本文中，我将记录如何配置 CI/CD 流水线，使得当我向 GitHub 推送代码时，阿里云 ECS 实例上的个人博客网站能够自动重新构建并重启服务。</span>
 
 ## Why CI/CD?
+
 ## 为什么需要 CI/CD？
 
 After containerizing the blog and establishing a manual deployment workflow, the remaining friction was the repetitive terminal work. Every time I modified the source code on my local machine, I had to push to GitHub, then open an SSH session to the ECS instance, pull the changes, rebuild the Docker images, and restart the stack. This sequence was predictable, tedious, and prone to human error — forgetting to purge the build cache, starting the wrong version, or leaving a container in a broken state.  
@@ -26,6 +30,7 @@ CI/CD addresses exactly this: once configured, a single `git push` triggers the 
 CI/CD 正是为了解决这个问题：一旦配置完成，一次 `git push` 就能触发整条流水线。云服务器自动更新自身，几分钟之内最新版本的博客即告上线。对于单人开发的个人项目，直接受益的并非开发速度，而是可靠性与心智负担的降低——你专注于写代码，机器负责部署。
 
 ## How to configure the pipeline
+
 ## 如何配置流水线
 
 The pipeline design is straightforward: a GitHub Actions workflow listens for push events on the `main` branch. When triggered, it establishes an SSH connection to the ECS instance, pulls the latest code, and rebuilds and restarts the Docker containers — all within a single remote script.  
@@ -65,7 +70,7 @@ name: Deploy to Cloud Server
 
 on:
   push:
-    branches: [ main ] 
+    branches: [main]
 
 jobs:
   deploy:
@@ -115,6 +120,7 @@ While the example above targets `main`, the same pattern can be extended to othe
 上述例子以 `main` 为目标分支，但相同的模式可以扩展到其他分支，只需扩展 `on.push.branches` 数组或复制工作流文件即可。对于个人博客，单分支流水线完全足够。如果未来需要部署预发布（staging）版本，可以创建第二个工作流，监听 `staging` 分支，并指向不同的目录或服务器，这是一种干净的扩展方式。
 
 ## Appendix: Notes on SSH Host Key Verification
+
 ## 附录：关于 SSH 主机密钥验证的说明
 
 In the workflow above, `StrictHostKeyChecking=no` is used when invoking the SSH command. This bypasses the interactive prompt that would appear when connecting to a host for the first time. In production environments, it is better to pre‑populate the runner’s `known_hosts` file with the server’s host key — for instance, by using the `ssh-keyscan` command and storing the output as a GitHub secret. For a personal project on a transient GitHub runner, the convenience outweighs the negligible security risk. If stricter security is desired, you can replace the relevant step with:  

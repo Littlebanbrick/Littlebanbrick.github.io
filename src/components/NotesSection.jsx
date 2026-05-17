@@ -23,9 +23,6 @@ function NotesSection({ notes }) {
         >
           <i className="fa-solid fa-arrow-left"></i> Back
         </button>
-        <h2 style={{ marginBottom: "1rem", fontWeight: "normal" }}>
-          {selectedNote.title}
-        </h2>
         <div className="markdown-body" style={{ lineHeight: 1.8, color: "var(--text)" }}>
           <ReactMarkdown rehypePlugins={[rehypeRaw]} remarkPlugins={[remarkGfm]}>
             {selectedNote.content}

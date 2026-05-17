@@ -17,18 +17,51 @@ const blogGlob = import.meta.glob("../notes/blog/*.md", {
   import: "default",
 });
 
+function stripMarkdown(text) {
+  return text
+    .replace(/^>\s*/gm, '')                    // blockquote
+    .replace(/\*\*(.*?)\*\*/g, '$1')            // bold **text**
+    .replace(/__(.*?)__/g, '$1')                // bold __text__
+    .replace(/\*(.*?)\*/g, '$1')                // italic *text*
+    .replace(/_(.*?)_/g, '$1')                  // italic _text_
+    .replace(/`([^`]+)`/g, '$1')                // inline code
+    .replace(/^#{1,6}\s+/gm, '')                // heading markers
+    .replace(/\[([^\]]+)\]\([^)]+\)/g, '$1')    // links [text](url)
+    .replace(/!\[([^\]]*)\]\([^)]+\)/g, '$1')   // images ![alt](url)
+    .replace(/^[-*+]\s+/gm, '')                 // unordered list markers
+    .replace(/^\d+\.\s+/gm, '')                 // ordered list markers
+    .replace(/\n{2,}/g, ' ')                    // multiple newlines → space
+    .replace(/\n/g, ' ')                        // single newlines → space
+    .trim();
+}
+
 async function loadNotesFromGlob(glob) {
   const entries = Object.entries(glob);
   const notes = await Promise.all(
     entries.map(async ([path, loader]) => {
       const content = await loader();
       const fileName = path.split("/").pop().replace(".md", "");
+
+      // 提取标题（第一行 # title）
       const firstLine = content.split("\n")[0].replace(/^#\s+/, "");
       const title = firstLine || fileName;
+
+      // 正文（去掉标题行）
       const bodyWithoutTitle = content.replace(/^#\s+.*\n?/, "").trim();
-      const preview =
-        bodyWithoutTitle.substring(0, 150).replace(/\n/g, " ") +
-        (bodyWithoutTitle.length > 150 ? "..." : "");
+
+      // 检查是否通过 HTML 注释自定义了预览
+      // 格式：<!-- preview: 自定义摘要文字 -->
+      const previewMatch = bodyWithoutTitle.match(/<!--\s*preview\s*:\s*(.*?)\s*-->/);
+
+      let preview;
+      if (previewMatch) {
+        preview = previewMatch[1].trim();
+      } else {
+        // 自动生成：剥离 Markdown 语法后取前 150 字符
+        preview = stripMarkdown(bodyWithoutTitle);
+        preview = preview.substring(0, 150) + (preview.length > 150 ? "..." : "");
+      }
+
       return { id: fileName, title, preview, content };
     }),
   );
