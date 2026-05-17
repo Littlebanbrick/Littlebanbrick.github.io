@@ -19,19 +19,19 @@ const blogGlob = import.meta.glob("../notes/blog/*.md", {
 
 function stripMarkdown(text) {
   return text
-    .replace(/^>\s*/gm, '')                    // blockquote
-    .replace(/\*\*(.*?)\*\*/g, '$1')            // bold **text**
-    .replace(/__(.*?)__/g, '$1')                // bold __text__
-    .replace(/\*(.*?)\*/g, '$1')                // italic *text*
-    .replace(/_(.*?)_/g, '$1')                  // italic _text_
-    .replace(/`([^`]+)`/g, '$1')                // inline code
-    .replace(/^#{1,6}\s+/gm, '')                // heading markers
-    .replace(/\[([^\]]+)\]\([^)]+\)/g, '$1')    // links [text](url)
-    .replace(/!\[([^\]]*)\]\([^)]+\)/g, '$1')   // images ![alt](url)
-    .replace(/^[-*+]\s+/gm, '')                 // unordered list markers
-    .replace(/^\d+\.\s+/gm, '')                 // ordered list markers
-    .replace(/\n{2,}/g, ' ')                    // multiple newlines → space
-    .replace(/\n/g, ' ')                        // single newlines → space
+    .replace(/^>\s*/gm, "") // blockquote
+    .replace(/\*\*(.*?)\*\*/g, "$1") // bold **text**
+    .replace(/__(.*?)__/g, "$1") // bold __text__
+    .replace(/\*(.*?)\*/g, "$1") // italic *text*
+    .replace(/_(.*?)_/g, "$1") // italic _text_
+    .replace(/`([^`]+)`/g, "$1") // inline code
+    .replace(/^#{1,6}\s+/gm, "") // heading markers
+    .replace(/\[([^\]]+)\]\([^)]+\)/g, "$1") // links [text](url)
+    .replace(/!\[([^\]]*)\]\([^)]+\)/g, "$1") // images ![alt](url)
+    .replace(/^[-*+]\s+/gm, "") // unordered list markers
+    .replace(/^\d+\.\s+/gm, "") // ordered list markers
+    .replace(/\n{2,}/g, " ") // multiple newlines → space
+    .replace(/\n/g, " ") // single newlines → space
     .trim();
 }
 
@@ -51,7 +51,9 @@ async function loadNotesFromGlob(glob) {
 
       // 检查是否通过 HTML 注释自定义了预览
       // 格式：<!-- preview: 自定义摘要文字 -->
-      const previewMatch = bodyWithoutTitle.match(/<!--\s*preview\s*:\s*(.*?)\s*-->/);
+      const previewMatch = bodyWithoutTitle.match(
+        /<!--\s*preview\s*:\s*(.*?)\s*-->/,
+      );
 
       let preview;
       if (previewMatch) {
@@ -59,7 +61,8 @@ async function loadNotesFromGlob(glob) {
       } else {
         // 自动生成：剥离 Markdown 语法后取前 150 字符
         preview = stripMarkdown(bodyWithoutTitle);
-        preview = preview.substring(0, 150) + (preview.length > 150 ? "..." : "");
+        preview =
+          preview.substring(0, 150) + (preview.length > 150 ? "..." : "");
       }
 
       return { id: fileName, title, preview, content };
@@ -246,7 +249,9 @@ function ContentLayout({
                 transition: "color 0.2s",
                 marginLeft: sidebarOpen ? "auto" : "0",
               }}
-              onMouseEnter={(e) => (e.currentTarget.style.color = "var(--text)")}
+              onMouseEnter={(e) =>
+                (e.currentTarget.style.color = "var(--text)")
+              }
               onMouseLeave={(e) =>
                 (e.currentTarget.style.color = "var(--text-light)")
               }
@@ -275,7 +280,6 @@ function ContentLayout({
           {activeSection === "essays" && (
             <NotesSection notes={{ title: "Essays", items: essaysNotes }} />
           )}
-
         </main>
 
         {/* Back to top — fixed to viewport */}
@@ -285,7 +289,8 @@ function ContentLayout({
           style={{
             position: "fixed",
             bottom: "1.5rem",
-            left: `max(1.5rem, ${(sidebarOpen ? (isMobile ? 160 : 220) : 32) + 12}px)`,
+            left: `max(1.5rem, ${(sidebarOpen ? (isMobile ? 160 : 220) : 32) / 2}px)`,
+            transform: sidebarOpen ? "translateX(-50%)" : "none",
             zIndex: 1100,
             display: "flex",
             alignItems: "center",
@@ -299,7 +304,8 @@ function ContentLayout({
             fontSize: "0.85rem",
             fontFamily: "inherit",
             opacity: showBackToTop && stage === "content" ? 1 : 0,
-            pointerEvents: showBackToTop && stage === "content" ? "auto" : "none",
+            pointerEvents:
+              showBackToTop && stage === "content" ? "auto" : "none",
             transition: "opacity 0.25s ease, color 0.2s",
             boxShadow: "0 2px 8px rgba(0,0,0,0.06)",
           }}
