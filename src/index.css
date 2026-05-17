@@ -210,14 +210,7 @@ a {
 #content-root {
   z-index: 500; /* 低于封面，但高于背景 */
   background: var(--bg);
-  overflow-y: auto; /* 内容可滚动 */
-
-  /* 隐藏滚动条，保留滚动功能 */
-  scrollbar-width: none;       /* Firefox */
-  -ms-overflow-style: none;    /* IE/Edge */
-}
-#content-root::-webkit-scrollbar {
-  display: none;               /* Chrome/Safari/Edge (Chromium) */
+  overflow: hidden;
 }
 
 /* 隐藏 main 和 pre 的滚动条 */

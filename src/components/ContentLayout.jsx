@@ -77,8 +77,10 @@ function ContentLayout({
 }) {
   const [sidebarOpen, setSidebarOpen] = useState(true);
   const [showArrow, setShowArrow] = useState(false);
+  const [showBackToTop, setShowBackToTop] = useState(false);
   const [activeSection, setActiveSection] = useState("blog");
   const contentRef = useRef(null);
+  const mainRef = useRef(null);
 
   // 响应式边栏宽度
   const [isMobile, setIsMobile] = useState(false);
@@ -88,6 +90,19 @@ function ContentLayout({
     window.addEventListener("resize", check);
     return () => window.removeEventListener("resize", check);
   }, []);
+
+  // 监听主内容区滚动，控制回到顶部按钮显隐
+  useEffect(() => {
+    const el = mainRef.current;
+    if (!el) return;
+    const handleScroll = () => setShowBackToTop(el.scrollTop > 400);
+    el.addEventListener("scroll", handleScroll, { passive: true });
+    return () => el.removeEventListener("scroll", handleScroll);
+  }, []);
+
+  const scrollToTop = () => {
+    mainRef.current?.scrollTo({ top: 0, behavior: "smooth" });
+  };
 
   const [studyNotes, setStudyNotes] = useState([]);
   const [essaysNotes, setEssaysNotes] = useState([]);
@@ -198,10 +213,18 @@ function ContentLayout({
           <div
             style={{
               display: "flex",
-              justifyContent: sidebarOpen ? "flex-end" : "center",
-              padding: "0.75rem 0",
+              justifyContent: "space-between",
+              alignItems: "center",
+              padding: "0 0 0.75rem 0",
+              borderBottom: sidebarOpen ? "1px solid var(--border)" : "none",
+              marginBottom: sidebarOpen ? "0.75rem" : "0",
             }}
           >
+            {sidebarOpen && (
+              <span style={{ fontSize: "0.85rem", color: "var(--text-light)", lineHeight: 1 }}>
+                导航
+              </span>
+            )}
             <button
               onClick={() => setSidebarOpen((prev) => !prev)}
               title={sidebarOpen ? "收起边栏" : "展开边栏"}
@@ -210,18 +233,21 @@ function ContentLayout({
                 border: "none",
                 cursor: "pointer",
                 color: "var(--text-light)",
-                fontSize: "1rem",
+                fontSize: sidebarOpen ? "0.9rem" : "1rem",
                 padding: "0.25rem",
                 borderRadius: "4px",
                 transition: "color 0.2s",
+                marginLeft: sidebarOpen ? "auto" : "0",
               }}
               onMouseEnter={(e) => (e.currentTarget.style.color = "var(--text)")}
               onMouseLeave={(e) =>
                 (e.currentTarget.style.color = "var(--text-light)")
               }
             >
+              {sidebarOpen ? "收起" : ""}
               <i
                 className={`fa-solid fa-chevron-${sidebarOpen ? "left" : "right"}`}
+                style={{ marginLeft: sidebarOpen ? "0.3rem" : "0" }}
               ></i>
             </button>
           </div>
@@ -233,7 +259,10 @@ function ContentLayout({
           )}
         </aside>
 
-        <main style={{ flex: 1, overflow: "auto", paddingLeft: "1.5rem" }}>
+        <main
+          ref={mainRef}
+          style={{ flex: 1, overflow: "auto", paddingLeft: "1.5rem" }}
+        >
           {activeSection === "blog" && <BlogSection content={blogContent} />}
           {activeSection === "notes" && (
             <NotesSection notes={{ title: "Study Notes", items: studyNotes }} />
@@ -241,7 +270,46 @@ function ContentLayout({
           {activeSection === "essays" && (
             <NotesSection notes={{ title: "Essays", items: essaysNotes }} />
           )}
+
         </main>
+
+        {/* 回到顶部按钮 — fixed 在 #content-root 外部，避免 transform 干扰 */}
+        <button
+          onClick={scrollToTop}
+          aria-label="回到顶部"
+          style={{
+            position: "fixed",
+            bottom: "1.5rem",
+            left: `max(1.5rem, ${(sidebarOpen ? (isMobile ? 160 : 220) : 32) + 12}px)`,
+            zIndex: 1100,
+            display: "flex",
+            alignItems: "center",
+            gap: "0.4rem",
+            background: "var(--bg-card)",
+            border: "1px solid var(--border)",
+            borderRadius: "20px",
+            padding: "0.5rem 1rem",
+            cursor: "pointer",
+            color: "var(--text-light)",
+            fontSize: "0.85rem",
+            fontFamily: "inherit",
+            opacity: showBackToTop && stage === "content" ? 1 : 0,
+            pointerEvents: showBackToTop && stage === "content" ? "auto" : "none",
+            transition: "opacity 0.25s ease, color 0.2s",
+            boxShadow: "0 2px 8px rgba(0,0,0,0.06)",
+          }}
+          onMouseEnter={(e) => {
+            e.currentTarget.style.color = "var(--text)";
+            e.currentTarget.style.borderColor = "var(--text)";
+          }}
+          onMouseLeave={(e) => {
+            e.currentTarget.style.color = "var(--text-light)";
+            e.currentTarget.style.borderColor = "var(--border)";
+          }}
+        >
+          <i className="fa-solid fa-arrow-up"></i>
+          回到顶部
+        </button>
       </div>
     </div>
   );

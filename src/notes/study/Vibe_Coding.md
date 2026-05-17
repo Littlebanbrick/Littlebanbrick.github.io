@@ -1,8 +1,6 @@
-# Learning Notes on Vibe Coding
+# Vibe Coding
 
  <!-- preview: 怎么Vibe Coding？这是一个值得思考的问题！-->
-
-# Vibe Coding 学习笔记
 
 ## 1. A Short Definition / 简短的定义
 
