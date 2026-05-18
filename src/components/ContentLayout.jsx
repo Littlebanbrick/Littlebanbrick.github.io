@@ -73,11 +73,30 @@ async function loadNotesFromGlob(glob) {
       const firstLine = content.split("\n")[0].replace(/^#\s+/, "");
       const title = firstLine || fileName;
       const bodyWithoutTitle = content.replace(/^#\s+.*\n?/, "").trim();
-      const preview =
-        bodyWithoutTitle.substring(0, 150).replace(/\n/g, " ") +
-        (bodyWithoutTitle.length > 150 ? "..." : "");
 
-      const note = { id: fileName, title, preview, content };
+      // 检查是否通过 HTML 注释自定义了预览
+      // 格式：<!-- preview: 自定义摘要文字 -->
+      const previewMatch = bodyWithoutTitle.match(
+        /<!--\s*preview\s*:\s*(.*?)\s*-->/,
+      );
+      let preview;
+      if (previewMatch) {
+        preview = previewMatch[1].trim();
+      } else {
+        // 自动生成：剥离 Markdown 语法后取前 150 字符
+        preview = stripMarkdown(bodyWithoutTitle);
+        preview =
+          preview.substring(0, 150) + (preview.length > 150 ? "..." : "");
+      }
+
+      // 检查是否置顶
+      // 格式：<!-- pinned: true -->（不写或 false 则不置顶）
+      const pinnedMatch = bodyWithoutTitle.match(
+        /<!--\s*pinned\s*:\s*(true|false)\s*-->/,
+      );
+      const pinned = pinnedMatch ? pinnedMatch[1] === "true" : false;
+
+      const note = { id: fileName, title, preview, content, pinned };
 
       if (!categoryMap.has(category)) {
         categoryMap.set(category, []);
@@ -86,10 +105,15 @@ async function loadNotesFromGlob(glob) {
     }),
   );
 
-  // 转换为排序后的数组：优先保留文件夹顺序（按插入顺序），也可自定义
+  // 转换为排序后的数组：每个分类内按置顶 + 标题字母序排序
   const categories = Array.from(categoryMap.entries()).map(([cat, items]) => ({
     title: cat,
-    items,
+    items: items.sort((a, b) => {
+      if (a.pinned !== b.pinned) {
+        return a.pinned ? -1 : 1;
+      }
+      return a.title.localeCompare(b.title);
+    }),
   }));
   return categories;
 }
