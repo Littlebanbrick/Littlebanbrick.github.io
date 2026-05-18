@@ -49,52 +49,49 @@ function stripMarkdown(text) {
 
 async function loadNotesFromGlob(glob) {
   const entries = Object.entries(glob);
-  const notes = await Promise.all(
+  const categoryMap = new Map(); // key: category, value: notes array
+
+  await Promise.all(
     entries.map(async ([path, loader]) => {
       const content = await loader();
-      const fileName = path.split("/").pop().replace(".md", "");
+      const relativePath = path
+        .replace("../notes/study/", "")
+        .replace("../notes/essays/", ""); // 去掉前缀
+      const parts = relativePath.split("/");
+      let category = "Uncategorized"; // 默认分类
+      let fileName;
 
-      // 提取标题（第一行 # title）
-      const firstLine = content.split("\n")[0].replace(/^#\s+/, "");
-      const title = firstLine || fileName;
-
-      // 正文（去掉标题行）
-      const bodyWithoutTitle = content.replace(/^#\s+.*\n?/, "").trim();
-
-      // 检查是否通过 HTML 注释自定义了预览
-      // 格式：<!-- preview: 自定义摘要文字 -->
-      const previewMatch = bodyWithoutTitle.match(
-        /<!--\s*preview\s*:\s*(.*?)\s*-->/,
-      );
-
-      let preview;
-      if (previewMatch) {
-        preview = previewMatch[1].trim();
+      if (parts.length > 1) {
+        // 有子文件夹，分类是文件夹名
+        category = parts[0];
+        fileName = parts[parts.length - 1].replace(".md", "");
       } else {
-        // 自动生成：剥离 Markdown 语法后取前 150 字符
-        preview = stripMarkdown(bodyWithoutTitle);
-        preview =
-          preview.substring(0, 150) + (preview.length > 150 ? "..." : "");
+        // 根目录下的文件
+        fileName = parts[0].replace(".md", "");
       }
 
-      // 检查是否置顶
-      // 格式：<!-- pinned: true -->（不写或 false 则不置顶）
-      const pinnedMatch = bodyWithoutTitle.match(
-        /<!--\s*pinned\s*:\s*(true|false)\s*-->/,
-      );
-      const pinned = pinnedMatch ? pinnedMatch[1] === "true" : false;
+      const firstLine = content.split("\n")[0].replace(/^#\s+/, "");
+      const title = firstLine || fileName;
+      const bodyWithoutTitle = content.replace(/^#\s+.*\n?/, "").trim();
+      const preview =
+        bodyWithoutTitle.substring(0, 150).replace(/\n/g, " ") +
+        (bodyWithoutTitle.length > 150 ? "..." : "");
 
-      return { id: fileName, title, preview, content, pinned };
+      const note = { id: fileName, title, preview, content };
+
+      if (!categoryMap.has(category)) {
+        categoryMap.set(category, []);
+      }
+      categoryMap.get(category).push(note);
     }),
   );
-  // 置顶排序：置顶的笔记排前面，同组内按标题字母序
-  notes.sort((a, b) => {
-    if (a.pinned !== b.pinned) {
-      return a.pinned ? -1 : 1;
-    }
-    return a.title.localeCompare(b.title);
-  });
-  return notes;
+
+  // 转换为排序后的数组：优先保留文件夹顺序（按插入顺序），也可自定义
+  const categories = Array.from(categoryMap.entries()).map(([cat, items]) => ({
+    title: cat,
+    items,
+  }));
+  return categories;
 }
 
 function ContentLayout({
@@ -133,15 +130,15 @@ function ContentLayout({
     mainRef.current?.scrollTo({ top: 0, behavior: "smooth" });
   };
 
-  const [studyNotes, setStudyNotes] = useState([]);
-  const [essaysNotes, setEssaysNotes] = useState([]);
+  const [studyCategories, setStudyCategories] = useState([]);
+  const [essayCategories, setEssayCategories] = useState([]);
   const [blogContent, setBlogContent] = useState("");
   const [aboutContent, setAboutContent] = useState("");
   const [welcomeContent, setWelcomeContent] = useState("");
 
   useEffect(() => {
-    loadNotesFromGlob(studyGlob).then(setStudyNotes);
-    loadNotesFromGlob(essaysGlob).then(setEssaysNotes);
+    loadNotesFromGlob(studyGlob).then(setStudyCategories);
+    loadNotesFromGlob(essaysGlob).then(setEssayCategories);
 
     // 加载 blog 文件
     const loadBlog = async () => {
@@ -323,13 +320,18 @@ function ContentLayout({
         >
           {activeSection === "blog" && <BlogSection content={blogContent} />}
           {activeSection === "notes" && (
-            <NotesSection notes={{ title: "Study Notes", items: studyNotes }} />
+            <NotesSection
+              categories={studyCategories}
+              sectionTitle="Study Notes"
+            />
           )}
           {activeSection === "essays" && (
-            <NotesSection notes={{ title: "Essays", items: essaysNotes }} />
+            <NotesSection categories={essayCategories} sectionTitle="Essays" />
           )}
           {activeSection === "about" && <AboutSection content={aboutContent} />}
-          {activeSection === 'welcome' && <WelcomeSection content={welcomeContent} />}
+          {activeSection === "welcome" && (
+            <WelcomeSection content={welcomeContent} />
+          )}
         </main>
 
         {/* Back to top — fixed to viewport */}

@@ -1,9 +1,8 @@
 import { useState } from "react";
 import ReactMarkdown from "react-markdown";
 import rehypeRaw from "rehype-raw";
-import remarkGfm from "remark-gfm";
 
-function NotesSection({ notes }) {
+function NotesSection({ categories, sectionTitle }) {
   const [selectedNote, setSelectedNote] = useState(null);
 
   if (selectedNote) {
@@ -23,8 +22,11 @@ function NotesSection({ notes }) {
         >
           <i className="fa-solid fa-arrow-left"></i> Back
         </button>
-        <div className="markdown-body" style={{ lineHeight: 1.8, color: "var(--text)" }}>
-          <ReactMarkdown rehypePlugins={[rehypeRaw]} remarkPlugins={[remarkGfm]}>
+        <h2 style={{ marginBottom: "1rem", fontWeight: "normal" }}>
+          {selectedNote.title}
+        </h2>
+        <div style={{ lineHeight: 1.8, color: "var(--text)" }}>
+          <ReactMarkdown rehypePlugins={[rehypeRaw]}>
             {selectedNote.content}
           </ReactMarkdown>
         </div>
@@ -43,60 +45,62 @@ function NotesSection({ notes }) {
           color: "var(--header-text)",
         }}
       >
-        {notes.title || "Notes"}
+        {sectionTitle}
       </h2>
-      {notes.items.map((note) => (
-        <div key={note.id}>
-          <div
-            onClick={() => setSelectedNote(note)}
-            style={{
-              padding: "1rem 0",
-              cursor: "pointer",
-              borderBottom: "1px solid var(--border)",
-              transition: "color 0.2s",
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "space-between",
-              gap: "1rem",
-            }}
-            onMouseEnter={(e) =>
-              (e.currentTarget.style.color = "var(--text-light)")
-            }
-            onMouseLeave={(e) => (e.currentTarget.style.color = "var(--text)")}
-          >
-            <div style={{ flex: 1, minWidth: 0 }}>
-              <h3
+      {categories.map((cat) => (
+        <div key={cat.title} style={{ marginBottom: "2rem" }}>
+          {/* 如果分类不是默认的 “Uncategorized”，显示分类标题 */}
+          {cat.title !== "Uncategorized" && (
+            <h3
+              style={{
+                fontSize: "1rem",
+                fontWeight: "normal",
+                color: "var(--text-light)",
+                marginBottom: "0.75rem",
+                marginTop: "1rem",
+              }}
+            >
+              {cat.title}
+            </h3>
+          )}
+          {cat.items.map((note) => (
+            <div key={note.id}>
+              <div
+                onClick={() => setSelectedNote(note)}
                 style={{
-                  fontSize: "1.1rem",
-                  fontWeight: "normal",
-                  marginBottom: "0.25rem",
+                  padding: "1rem 0",
+                  cursor: "pointer",
+                  borderBottom: "1px solid var(--border)",
+                  transition: "color 0.2s",
                 }}
+                onMouseEnter={(e) =>
+                  (e.currentTarget.style.color = "var(--text-light)")
+                }
+                onMouseLeave={(e) =>
+                  (e.currentTarget.style.color = "var(--text)")
+                }
               >
-                {note.title}
-              </h3>
-              <p
-                style={{
-                  fontSize: "0.9rem",
-                  color: "var(--text-light)",
-                  margin: 0,
-                }}
-              >
-                {note.preview}
-              </p>
+                <h3
+                  style={{
+                    fontSize: "1.1rem",
+                    fontWeight: "normal",
+                    marginBottom: "0.25rem",
+                  }}
+                >
+                  {note.title}
+                </h3>
+                <p
+                  style={{
+                    fontSize: "0.9rem",
+                    color: "var(--text-light)",
+                    margin: 0,
+                  }}
+                >
+                  {note.preview}
+                </p>
+              </div>
             </div>
-            {note.pinned && (
-              <i
-                className="fa-solid fa-thumbtack"
-                style={{
-                  fontSize: "0.85rem",
-                  color: "var(--text-light)",
-                  opacity: 0.4,
-                  transform: "rotate(45deg)",
-                  flexShrink: 0,
-                }}
-              />
-            )}
-          </div>
+          ))}
         </div>
       ))}
     </div>
