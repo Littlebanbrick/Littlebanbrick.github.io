@@ -6,7 +6,7 @@ import NotesSection from "./NotesSection";
 import AboutSection from "./AboutSection";
 import WelcomeSection from "./WelcomeSection";
 
-const studyGlob = import.meta.glob("../notes/study/*.md", {
+const studyGlob = import.meta.glob("../notes/study/**/*.md", {
   query: "?raw",
   import: "default",
 });
