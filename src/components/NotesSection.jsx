@@ -86,6 +86,10 @@ function NotesSection({ categories, sectionTitle }) {
                 cursor: "pointer",
                 borderBottom: "1px solid var(--border)",
                 transition: "color 0.2s",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "space-between",
+                gap: "1rem",
               }}
               onMouseEnter={(e) =>
                 (e.currentTarget.style.color = "var(--text-light)")
@@ -94,38 +98,38 @@ function NotesSection({ categories, sectionTitle }) {
                 (e.currentTarget.style.color = "var(--text)")
               }
             >
-              <h3
-                style={{
-                  fontSize: "1.1rem",
-                  fontWeight: "normal",
-                  marginBottom: "0.25rem",
-                  display: "flex",
-                  alignItems: "center",
-                  gap: "0.4rem",
-                }}
-              >
-                <span>{note.title}</span>
-                {note.pinned && (
-                  <i
-                    className="fa-solid fa-thumbtack"
-                    style={{
-                      fontSize: "0.7rem",
-                      color: "var(--text-light)",
-                      opacity: 0.5,
-                      transform: "rotate(45deg)",
-                    }}
-                  />
-                )}
-              </h3>
-              <p
-                style={{
-                  fontSize: "0.9rem",
-                  color: "var(--text-light)",
-                  margin: 0,
-                }}
-              >
-                {note.preview}
-              </p>
+              <div style={{ flex: 1, minWidth: 0 }}>
+                <h3
+                  style={{
+                    fontSize: "1.1rem",
+                    fontWeight: "normal",
+                    marginBottom: "0.25rem",
+                  }}
+                >
+                  {note.title}
+                </h3>
+                <p
+                  style={{
+                    fontSize: "0.9rem",
+                    color: "var(--text-light)",
+                    margin: 0,
+                  }}
+                >
+                  {note.preview}
+                </p>
+              </div>
+              {note.pinned && (
+                <i
+                  className="fa-solid fa-thumbtack"
+                  style={{
+                    fontSize: "0.85rem",
+                    color: "var(--text-light)",
+                    opacity: 0.4,
+                    transform: "rotate(45deg)",
+                    flexShrink: 0,
+                  }}
+                />
+              )}
             </div>
           </div>
         ))}
@@ -226,6 +230,10 @@ function NotesSection({ categories, sectionTitle }) {
                   cursor: "pointer",
                   borderBottom: "1px solid var(--border)",
                   transition: "color 0.2s",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "space-between",
+                  gap: "1rem",
                 }}
                 onMouseEnter={(e) =>
                   (e.currentTarget.style.color = "var(--text-light)")
@@ -234,38 +242,38 @@ function NotesSection({ categories, sectionTitle }) {
                   (e.currentTarget.style.color = "var(--text)")
                 }
               >
-                <h3
-                  style={{
-                    fontSize: "1.1rem",
-                    fontWeight: "normal",
-                    marginBottom: "0.25rem",
-                    display: "flex",
-                    alignItems: "center",
-                    gap: "0.4rem",
-                  }}
-                >
-                  <span>{note.title}</span>
-                  {note.pinned && (
-                    <i
-                      className="fa-solid fa-thumbtack"
-                      style={{
-                        fontSize: "0.7rem",
-                        color: "var(--text-light)",
-                        opacity: 0.5,
-                        transform: "rotate(45deg)",
-                      }}
-                    />
-                  )}
-                </h3>
-                <p
-                  style={{
-                    fontSize: "0.9rem",
-                    color: "var(--text-light)",
-                    margin: 0,
-                  }}
-                >
-                  {note.preview}
-                </p>
+                <div style={{ flex: 1, minWidth: 0 }}>
+                  <h3
+                    style={{
+                      fontSize: "1.1rem",
+                      fontWeight: "normal",
+                      marginBottom: "0.25rem",
+                    }}
+                  >
+                    {note.title}
+                  </h3>
+                  <p
+                    style={{
+                      fontSize: "0.9rem",
+                      color: "var(--text-light)",
+                      margin: 0,
+                    }}
+                  >
+                    {note.preview}
+                  </p>
+                </div>
+                {note.pinned && (
+                  <i
+                    className="fa-solid fa-thumbtack"
+                    style={{
+                      fontSize: "0.85rem",
+                      color: "var(--text-light)",
+                      opacity: 0.4,
+                      transform: "rotate(45deg)",
+                      flexShrink: 0,
+                    }}
+                  />
+                )}
               </div>
             </div>
           ))}
