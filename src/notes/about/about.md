@@ -30,7 +30,7 @@ I’ve always believed that technology is not only about efficiency and engineer
 />
 
 <img
-    src="https://github-readme-streak-stats.herokuapp.com/?user=Littlebanbrick&theme=graywhite&hide_border=true"
+    src="https://streak-stats.demolab.com/?user=Littlebanbrick&theme=graywhite&hide_border=true"
     alt="GitHub Streak"
     style="height: 150px; border-radius: 6px;"
   />
