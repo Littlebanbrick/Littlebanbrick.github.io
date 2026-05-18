@@ -1,6 +1,7 @@
 import { useState } from "react";
 import ReactMarkdown from "react-markdown";
 import rehypeRaw from "rehype-raw";
+import remarkGfm from "remark-gfm";
 
 function NotesSection({ categories, sectionTitle }) {
   const [selectedNote, setSelectedNote] = useState(null);
@@ -25,8 +26,8 @@ function NotesSection({ categories, sectionTitle }) {
         <h2 style={{ marginBottom: "1rem", fontWeight: "normal" }}>
           {selectedNote.title}
         </h2>
-        <div style={{ lineHeight: 1.8, color: "var(--text)" }}>
-          <ReactMarkdown rehypePlugins={[rehypeRaw]}>
+        <div className="markdown-body" style={{ lineHeight: 1.8, color: "var(--text)" }}>
+          <ReactMarkdown rehypePlugins={[rehypeRaw]} remarkPlugins={[remarkGfm]}>
             {selectedNote.content}
           </ReactMarkdown>
         </div>
