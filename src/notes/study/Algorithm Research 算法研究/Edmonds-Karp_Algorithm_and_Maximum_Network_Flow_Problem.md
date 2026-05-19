@@ -152,16 +152,16 @@ An **s-t cut** is a partition of all vertices into two disjoint sets, convention
 
 **一个具体例子。** 考虑和之前相同的图：`s -> a`（容量 1），`s -> b`（容量 1），`a -> t`（容量 1），`b -> t`（容量 1），`a -> b`（容量 1）。来看看几种可能的割：
 
-- Cut 1: `S = {s}`, `T = {a, b, t}`. Edges crossing from S to T: `s -> a` (1), `s -> b` (1). Total capacity = 2.
+- Cut 1: `S = {s}`, `T = {a, b, t}`. Edges crossing from S to T: `s -> a` (1), `s -> b` (1). Total capacity = 2.  
   割 1：`S = {s}`，`T = {a, b, t}`。从 S 跨到 T 的边：`s -> a`（1），`s -> b`（1）。总容量 = 2。
 
-- Cut 2: `S = {s, a, b}`, `T = {t}`. Edges crossing from S to T: `a -> t` (1), `b -> t` (1). Total capacity = 2.
+- Cut 2: `S = {s, a, b}`, `T = {t}`. Edges crossing from S to T: `a -> t` (1), `b -> t` (1). Total capacity = 2.  
   割 2：`S = {s, a, b}`，`T = {t}`。从 S 跨到 T 的边：`a -> t`（1），`b -> t`（1）。总容量 = 2。
 
-- Cut 3: `S = {s, a}`, `T = {b, t}`. Edges crossing from S to T: `s -> b` (1), `a -> b` (1), `a -> t` (1). Total capacity = 3.
+- Cut 3: `S = {s, a}`, `T = {b, t}`. Edges crossing from S to T: `s -> b` (1), `a -> b` (1), `a -> t` (1). Total capacity = 3.  
   割 3：`S = {s, a}`，`T = {b, t}`。从 S 跨到 T 的边：`s -> b`（1），`a -> b`（1），`a -> t`（1）。总容量 = 3。
 
-- Cut 4: `S = {s, b}`, `T = {a, t}`. Edges crossing: `s -> a` (1), `b -> t` (1). Total capacity = 2. (Note: `a -> b` goes from T to S, so it is not counted.)
+- Cut 4: `S = {s, b}`, `T = {a, t}`. Edges crossing: `s -> a` (1), `b -> t` (1). Total capacity = 2. (Note: `a -> b` goes from T to S, so it is not counted.)  
   割 4：`S = {s, b}`，`T = {a, t}`。跨向边：`s -> a`（1），`b -> t`（1）。总容量 = 2。（注意 `a -> b` 从 T 到 S，不计入。）
 
 The minimum cut capacity in this example is 2, which equals the maximum flow. This is no coincidence — the max-flow min-cut theorem guarantees this equality for every network. Intuitively, the maximum flow cannot exceed the capacity of *any* cut, because all flow must cross from the `s`-side to the `t`-side somewhere, and every such crossing point contributes to some cut's capacity. The theorem states that the maximum flow actually *achieves* this lower bound. It not only proves the correctness of max-flow algorithms (when no more augmenting paths exist, the set of vertices reachable from `s` in the residual network forms an `S` whose cut capacity equals the flow value) but also means that solving max flow immediately solves the min-cut problem — with applications in image segmentation, network reliability analysis, and more.
@@ -174,7 +174,62 @@ Maximum flow is not just a classroom exercise. Bipartite matching (assigning wor
 
 最大流不只是一道课堂题。二分图匹配（工人分配任务、学生分配项目）直接归约为最大流。计算机网络中，路由和带宽分配依赖最大流模型。最小割一侧被用于图像分割（基于图割的分割）和分析网络脆弱性。航班调度、循环流问题、甚至某些体育淘汰问题都可以建模为最大流。
 
-## Appendix: Core Code Skeleton / 附录：核心代码框架
+## Appendix 1: The Ford-Fulkerson Framework and the Original DFS-Based Algorithm / 附录1：Ford-Fulkerson 框架与原始 DFS 算法
+
+The algorithm implemented in this note — Edmonds-Karp — is one member of a larger family. The overarching framework is called the **Ford-Fulkerson method**, and understanding it clarifies both what Edmonds-Karp improved and why.
+
+本笔记中实现的算法——Edmonds-Karp——是一个更大族群的成员。这个总体框架称为 **Ford-Fulkerson 方法**，理解它能看清 Edmonds-Karp 改进了什么，以及为什么需要改进。
+
+### The Ford-Fulkerson Framework / Ford-Fulkerson 框架
+
+The Ford-Fulkerson method does not prescribe *how* to find an augmenting path. It only prescribes the following loop, repeated until termination:
+
+Ford-Fulkerson 方法不规定*如何*寻找增广路径。它只规定了以下循环，反复执行直到终止：
+
+1. Build the residual network (forward edges with remaining capacity, reverse edges with capacity equal to current flow).
+   构建残余网络（正向边容量为剩余容量，反向边容量等于当前流量）。
+
+2. Find *any* augmenting path from `s` to `t` in the residual network — any directed path where every edge has positive residual capacity.
+   在残余网络中寻找*任意*一条从 `s` 到 `t` 的增广路径——任意一条每条边残余容量都为正的有向路径。
+
+3. If no such path exists, terminate. The current flow is maximal.
+   若不存在这样的路径，终止。当前流即为最大流。
+
+4. Find the bottleneck (the smallest residual capacity along the path), push that amount of flow along the path, and update residual capacities: subtract the bottleneck from each forward edge, add the bottleneck to each reverse edge.
+   找到瓶颈（路径上最小的残余容量），沿路径推送该数量的流量，并更新残余容量：每条正向边减去瓶颈，每条反向边加上瓶颈。
+
+5. Repeat.
+   重复。
+
+Any algorithm that follows this skeleton is a Ford-Fulkerson algorithm. The difference between variants lies entirely in **Step 2: how the augmenting path is chosen**.
+
+任何遵循这个骨架的算法都是 Ford-Fulkerson 算法。变种之间的区别完全在于**第二步：增广路径的选择方式**。
+
+### The Original Ford-Fulkerson: DFS-Based / 原始 Ford-Fulkerson：基于 DFS
+
+The original version, as described by Ford and Fulkerson in 1956, used **Depth-First Search (DFS)** to find an augmenting path.
+
+Ford 和 Fulkerson 在 1956 年描述的原始版本，使用 **深度优先搜索 (DFS)** 来寻找增广路径。
+
+What is DFS? Unlike BFS, which explores in layers (visiting all vertices one step away before any two steps away, like ripples in water), DFS explores by going as far as possible along one branch before backing up. Imagine entering a maze and always turning right until you hit a dead end, then backtracking to the last junction and trying the next right turn. DFS works similarly: it follows the first available edge, then the first available edge from there, going deeper and deeper until it either reaches `t` or hits a dead end (no more outgoing edges with positive residual capacity). When it hits a dead end, it backtracks and tries the next unexplored edge. This "go deep first" strategy can find a path very quickly in some cases, but the path it finds may be arbitrarily long and tortuous.
+
+什么是 DFS？BFS 按层探索（像水波一样，先访问所有距离一步的顶点，再访问距离两步的），DFS 则不同：它沿着一条分支尽可能走到底，然后再回退。想象进入一个迷宫，总是右转，直到撞上死胡同，然后退回到上一个岔路口，试下一个右转。DFS 的工作原理类似：它沿着第一条可用边走，然后从那里继续沿第一条可用边走，不断深入，直到到达 `t` 或撞上死胡同（没有残余容量为正的出边）。撞上死胡同时，它回退并尝试下一条未探索的边。这种“先深入”的策略在某些情况下能很快找到路径，但找到的路径可能任意长、任意曲折。
+
+The fatal flaw: DFS might repeatedly pick long, winding paths that push very little flow each time (because the bottleneck is a tiny capacity somewhere along the path), requiring an enormous number of iterations. Worse, the number of iterations can depend on the actual capacity values, not just the graph size. In a graph with large integer capacities, the algorithm might take millions of augmentations. With irrational capacities, it might not even terminate. This is why Ford-Fulkerson (DFS) is mainly of historical and pedagogical interest.
+
+致命缺陷：DFS 可能反复选择又长又绕的路径，每次只推送极少的流量（因为瓶颈是路径上某处的一个微小容量），导致需要极多次迭代。更糟的是，迭代次数可能取决于实际的容量值，而不仅仅是图的规模。在容量为大量整数的图中，算法可能需要上百万次增广。对于无理数容量，它甚至可能不终止。这就是为什么 Ford-Fulkerson（DFS）主要只具有历史意义和教学价值。
+
+### From Ford-Fulkerson to Edmonds-Karp / 从 Ford-Fulkerson 到 Edmonds-Karp
+
+Edmonds-Karp's decisive improvement was to replace DFS with BFS in Step 2. By always selecting the **shortest** augmenting path (in terms of number of edges), it bounds the number of augmentations by O(V·E), completely independent of the capacity values. This turns an unreliable method into a provably polynomial algorithm.
+
+Edmonds-Karp 的关键改进是在第二步中用 BFS 替换了 DFS。通过总是选择**最短的**增广路径（以边数计），它将增广次数限制在 O(V·E)，与容量值完全无关。这把一个不可靠的方法变成了一个可证明的多项式算法。
+
+In summary: Ford-Fulkerson is the abstract blueprint ("keep finding augmenting paths, however you like"). Edmonds-Karp is the concrete, efficient realization ("use BFS to find the shortest one each time").
+
+总结：Ford-Fulkerson 是抽象蓝图（“不断找增广路径，随便怎么找”）。Edmonds-Karp 是具体、高效的实现（“每次用 BFS 找最短的那条”）。
+
+## Appendix 2: Core Code Skeleton / 附录2：核心代码框架
 
 ```c
 /* Assume vertices are numbered 0 .. V-1. Graph built with adjacency list
