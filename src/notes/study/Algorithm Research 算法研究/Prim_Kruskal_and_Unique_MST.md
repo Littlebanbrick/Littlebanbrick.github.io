@@ -1,6 +1,6 @@
 # Prim, Kruskal and Unique MST
 
-<!--preview: 怎么从零实现Prim和Kruskal算法？怎么进行MST的唯一性判定？-->
+<!-- preview: 怎么从零实现Prim和Kruskal算法？怎么进行MST的唯一性判定？-->
 
 # Prim, Kruskal 算法和唯一最小生成树
 

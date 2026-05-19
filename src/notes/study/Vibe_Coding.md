@@ -175,7 +175,7 @@ The brilliance of this framework is that it's not really about which specific to
 
 这个框架的精妙之处在于，重点不是你具体用哪个工具——而是认识到不同的问题需要不同层级的 AI 介入，把最强的工具用在每一个问题上既浪费，有时还适得其反。让高频的简单工作走最快通道。把重武器留给真正需要它的时刻。
 
-## Afterword / 后记
+## Afterword / 跋
 
 If there's one thing I want you to take away, it's this: vibe coding is a spectrum, not a binary switch. You don't have to choose between "AI writes everything and I understand nothing" and "I type every character by hand like it's 1995." The sweet spot, at least for me, is somewhere in the middle: let AI handle the scaffolding so you can focus your brain on the parts that actually grow your skills.
 
