@@ -29,12 +29,6 @@ I’ve always believed that technology is not only about efficiency and engineer
   style="max-width: 100%; border-radius: 6px; margin: 1.5rem 0;"
 />
 
-<img
-    src="https://streak-stats.demolab.com/?user=Littlebanbrick&theme=graywhite&hide_border=true"
-    alt="GitHub Streak"
-    style="height: 150px; border-radius: 6px;"
-  />
-
 </div>
 
 <br>
