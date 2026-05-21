@@ -4,7 +4,6 @@ import rehypeRaw from "rehype-raw";
 import remarkGfm from "remark-gfm";
 import remarkMath from "remark-math";
 import rehypeKatex from "rehype-katex";
-import rehypeHeadingSlug from "../utils/rehype-heading-slug";
 
 function NotesSection({ categories, sectionTitle }) {
   const [selectedNote, setSelectedNote] = useState(null);
@@ -38,7 +37,7 @@ function NotesSection({ categories, sectionTitle }) {
           style={{ lineHeight: 1.8, color: "var(--text)" }}
         >
           <ReactMarkdown
-            rehypePlugins={[rehypeRaw, rehypeHeadingSlug, rehypeKatex]}
+            rehypePlugins={[rehypeRaw, rehypeKatex]}
             remarkPlugins={[remarkGfm, remarkMath]}
           >
             {selectedNote.content}

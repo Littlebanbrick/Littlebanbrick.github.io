@@ -8,9 +8,9 @@
 
 Tips / 提示：  
 
-This article [Part 1](#1-what-the-data-structures-course-covers--数据结构课考什么) explains the properties of heaps and some simple algorithms that are commonly tested in data structure courses; [Part 2](#2-heap-algorithms-beyond-the-classroom--课堂之外的堆算法) covers slightly more advanced content, including three modules: heap sorting, Top-K problem, and Top-K frequent elements problem, the latter two of which are classic algorithm exam questions; [Part 3](#3-beyond-the-basics-the-deeper-architecture-and-algorithmic-roles-of-heaps--基础之上堆的深层架构与算法角色) delves deeper into the architecture and algorithmic roles of heaps. Feel free to jump to the corresponding section as needed.
+This article Part 1 explains the properties of heaps and some simple algorithms that are commonly tested in data structure courses; Part 2 covers slightly more advanced content, including three modules: heap sorting, Top-K problem, and Top-K frequent elements problem, the latter two of which are classic algorithm exam questions; Part 3 delves deeper into the architecture and algorithmic roles of heaps. Feel free to jump to the corresponding section as needed.
 
-本文[第一部分](#1-what-the-data-structures-course-covers--数据结构课考什么)讲解数据结构课上通常会考察的堆性质和一些简单算法；[第二部分](#2-heap-algorithms-beyond-the-classroom--课堂之外的堆算法)会讲解稍微进阶一点的内容，包括堆排序、Top-K问题以及前K个高频元素问题三个模块，后两者是经典的算法考题；[第三部分](#3-beyond-the-basics-the-deeper-architecture-and-algorithmic-roles-of-heaps--基础之上堆的深层架构与算法角色)则会对堆算法和性质进行更深入的研究。请根据需要自行跳转到对应章节。
+本文第一部分讲解数据结构课上通常会考察的堆性质和一些简单算法；第二部分会讲解稍微进阶一点的内容，包括堆排序、Top-K问题以及前K个高频元素问题三个模块，后两者是经典的算法考题；第三部分则会对堆算法和性质进行更深入的研究。请根据需要自行跳转到对应章节。
 
 Unless otherwise specified, the "heap" mentioned in this article refers to a binary heap.
 For detailed research on D-heap, please refer to Section 3.6.

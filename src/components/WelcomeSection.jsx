@@ -2,7 +2,6 @@ import ReactMarkdown from "react-markdown";
 import rehypeRaw from "rehype-raw";
 import remarkMath from "remark-math";
 import rehypeKatex from "rehype-katex";
-import rehypeHeadingSlug from "../utils/rehype-heading-slug";
 
 function WelcomeSection({ content }) {
   return (
@@ -16,7 +15,7 @@ function WelcomeSection({ content }) {
     >
       <ReactMarkdown
         remarkPlugins={[remarkMath]}
-        rehypePlugins={[rehypeRaw, rehypeHeadingSlug, rehypeKatex]}
+        rehypePlugins={[rehypeRaw, rehypeKatex]}
       >
         {content}
       </ReactMarkdown>

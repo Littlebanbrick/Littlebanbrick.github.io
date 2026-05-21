@@ -3,7 +3,6 @@ import ReactMarkdown from 'react-markdown';
 import rehypeRaw from 'rehype-raw';
 import remarkMath from 'remark-math';
 import rehypeKatex from 'rehype-katex';
-import rehypeHeadingSlug from '../utils/rehype-heading-slug';
 
 // 每天变一次的版本号，强制浏览器重新请求外部图片
 function dailyVersion() {
@@ -88,7 +87,7 @@ function AboutSection({ content }) {
     >
       <ReactMarkdown
         remarkPlugins={[remarkMath]}
-        rehypePlugins={[rehypeRaw, rehypeHeadingSlug, rehypeKatex]}
+        rehypePlugins={[rehypeRaw, rehypeKatex]}
         components={{ img: ImgWithFallback }}
       >
         {content}

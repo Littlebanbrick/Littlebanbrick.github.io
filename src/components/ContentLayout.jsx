@@ -154,20 +154,6 @@ function ContentLayout({
     mainRef.current?.scrollTo({ top: 0, behavior: "smooth" });
   };
 
-  /** Scroll `<main>` when the URL hash points to a heading inside content. */
-  useEffect(() => {
-    const onHashChange = () => {
-      const id = window.location.hash.slice(1);
-      if (!id || !mainRef.current) return;
-      requestAnimationFrame(() => {
-        const el = document.getElementById(id);
-        if (el) el.scrollIntoView({ behavior: "smooth", block: "start" });
-      });
-    };
-    window.addEventListener("hashchange", onHashChange);
-    return () => window.removeEventListener("hashchange", onHashChange);
-  }, []);
-
   const [studyCategories, setStudyCategories] = useState([]);
   const [essayCategories, setEssayCategories] = useState([]);
   const [blogContent, setBlogContent] = useState("");
