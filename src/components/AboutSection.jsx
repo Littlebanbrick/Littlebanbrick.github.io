@@ -3,6 +3,7 @@ import ReactMarkdown from 'react-markdown';
 import rehypeRaw from 'rehype-raw';
 import remarkMath from 'remark-math';
 import rehypeKatex from 'rehype-katex';
+import normalizeMath from '../utils/math';
 
 // 每天变一次的版本号，强制浏览器重新请求外部图片
 function dailyVersion() {
@@ -90,7 +91,7 @@ function AboutSection({ content }) {
         rehypePlugins={[rehypeRaw, rehypeKatex]}
         components={{ img: ImgWithFallback }}
       >
-        {content}
+        {normalizeMath(content)}
       </ReactMarkdown>
     </div>
   );

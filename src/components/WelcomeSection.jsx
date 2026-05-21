@@ -2,6 +2,7 @@ import ReactMarkdown from "react-markdown";
 import rehypeRaw from "rehype-raw";
 import remarkMath from "remark-math";
 import rehypeKatex from "rehype-katex";
+import normalizeMath from "../utils/math";
 
 function WelcomeSection({ content }) {
   return (
@@ -17,7 +18,7 @@ function WelcomeSection({ content }) {
         remarkPlugins={[remarkMath]}
         rehypePlugins={[rehypeRaw, rehypeKatex]}
       >
-        {content}
+        {normalizeMath(content)}
       </ReactMarkdown>
     </div>
   );

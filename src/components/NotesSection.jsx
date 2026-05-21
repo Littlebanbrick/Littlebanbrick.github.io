@@ -4,6 +4,7 @@ import rehypeRaw from "rehype-raw";
 import remarkGfm from "remark-gfm";
 import remarkMath from "remark-math";
 import rehypeKatex from "rehype-katex";
+import normalizeMath from "../utils/math";
 
 function NotesSection({ categories, sectionTitle }) {
   const [selectedNote, setSelectedNote] = useState(null);
@@ -40,7 +41,7 @@ function NotesSection({ categories, sectionTitle }) {
             rehypePlugins={[rehypeRaw, rehypeKatex]}
             remarkPlugins={[remarkGfm, remarkMath]}
           >
-            {selectedNote.content}
+            {normalizeMath(selectedNote.content)}
           </ReactMarkdown>
         </div>
       </div>

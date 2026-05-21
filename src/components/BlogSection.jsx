@@ -3,6 +3,7 @@ import rehypeRaw from 'rehype-raw';
 import remarkGfm from 'remark-gfm';
 import remarkMath from 'remark-math';
 import rehypeKatex from 'rehype-katex';
+import normalizeMath from '../utils/math';
 import CardLink from './CardLink';
 
 function BlogSection({ content }) {
@@ -16,7 +17,7 @@ function BlogSection({ content }) {
       <div style={{ marginTop: '2rem' }}>
         <div className="markdown-body" style={{ lineHeight: 1.8, color: 'var(--text)' }}>
           <ReactMarkdown rehypePlugins={[rehypeRaw, rehypeKatex]} remarkPlugins={[remarkGfm, remarkMath]}>
-            {content}
+            {normalizeMath(content)}
           </ReactMarkdown>
         </div>
       </div>
