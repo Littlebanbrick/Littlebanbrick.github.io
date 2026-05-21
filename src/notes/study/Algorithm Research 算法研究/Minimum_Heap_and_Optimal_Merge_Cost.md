@@ -1,6 +1,6 @@
 # Minimum Heap and Optimal Merge Cost
 
-<!--preview: ！？堆堆？！-->
+<!--preview: 如何用最小堆的性质优雅解决最优合并成本问题？-->
 
 # 最小堆与最优合并成本
 

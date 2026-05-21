@@ -53,7 +53,7 @@ function ImgWithFallback(props) {
             fontSize: '0.85rem',
           }}
         >
-          加载中...
+          LOADING...
         </span>
       )}
       <img
