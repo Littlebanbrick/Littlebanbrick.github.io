@@ -279,6 +279,42 @@ main::-webkit-scrollbar,
   }
 }
 
+/* ======= <details> / <summary> 折叠块 ======= */
+details {
+  margin: 1rem 0;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  background: var(--bg-card);
+  transition: border-color 0.2s;
+}
+details:hover {
+  border-color: var(--text-light);
+}
+summary {
+  cursor: pointer;
+  padding: 0.75rem 1rem;
+  font-weight: 600;
+  font-size: 0.9rem;
+  color: var(--text);
+  background: var(--bg-card);
+  border-radius: 6px 6px 0 0;
+  user-select: none;
+  list-style: disclosure-closed inside;
+}
+details[open] summary {
+  list-style: disclosure-open inside;
+  border-bottom: 1px solid var(--border);
+}
+summary::-webkit-details-marker {
+  display: inline;
+}
+details[open] > :nth-child(2) {
+  margin-top: 0;
+}
+details > :not(summary) {
+  padding: 0.75rem 1rem;
+}
+
 /* 侧边栏折叠动画 */
 aside {
   transition: width 0.2s ease, padding-right 0.2s ease;

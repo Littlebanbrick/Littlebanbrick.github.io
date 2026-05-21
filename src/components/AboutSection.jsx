@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import ReactMarkdown from 'react-markdown';
 import rehypeRaw from 'rehype-raw';
+import rehypeHeadingSlug from '../utils/rehype-heading-slug';
 
 // 每天变一次的版本号，强制浏览器重新请求外部图片
 function dailyVersion() {
@@ -84,7 +85,7 @@ function AboutSection({ content }) {
       }}
     >
       <ReactMarkdown
-        rehypePlugins={[rehypeRaw]}
+        rehypePlugins={[rehypeRaw, rehypeHeadingSlug]}
         components={{ img: ImgWithFallback }}
       >
         {content}

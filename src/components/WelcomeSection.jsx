@@ -1,5 +1,6 @@
 import ReactMarkdown from "react-markdown";
 import rehypeRaw from "rehype-raw";
+import rehypeHeadingSlug from "../utils/rehype-heading-slug";
 
 function WelcomeSection({ content }) {
   return (
@@ -11,7 +12,7 @@ function WelcomeSection({ content }) {
         color: "var(--text)",
       }}
     >
-      <ReactMarkdown rehypePlugins={[rehypeRaw]}>{content}</ReactMarkdown>
+      <ReactMarkdown rehypePlugins={[rehypeRaw, rehypeHeadingSlug]}>{content}</ReactMarkdown>
     </div>
   );
 }
