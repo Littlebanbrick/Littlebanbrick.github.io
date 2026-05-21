@@ -154,20 +154,19 @@ function ContentLayout({
     mainRef.current?.scrollTo({ top: 0, behavior: "smooth" });
   };
 
-  /** Intercept anchor link clicks and scroll `main` (the real scroll container). */
-  const handleAnchorClick = (e) => {
-    const anchor = e.target.closest('a[href^="#"]');
-    if (!anchor || !mainRef.current) return;
-    e.preventDefault();
-    const id = anchor.getAttribute("href").slice(1);
-    const el = document.getElementById(id);
-    if (el) {
-      const cr = mainRef.current.getBoundingClientRect();
-      const er = el.getBoundingClientRect();
-      const top = er.top - cr.top + mainRef.current.scrollTop - 20;
-      mainRef.current.scrollTo({ top, behavior: "smooth" });
-    }
-  };
+  /** Scroll `<main>` when the URL hash points to a heading inside content. */
+  useEffect(() => {
+    const onHashChange = () => {
+      const id = window.location.hash.slice(1);
+      if (!id || !mainRef.current) return;
+      requestAnimationFrame(() => {
+        const el = document.getElementById(id);
+        if (el) el.scrollIntoView({ behavior: "smooth", block: "start" });
+      });
+    };
+    window.addEventListener("hashchange", onHashChange);
+    return () => window.removeEventListener("hashchange", onHashChange);
+  }, []);
 
   const [studyCategories, setStudyCategories] = useState([]);
   const [essayCategories, setEssayCategories] = useState([]);
@@ -355,7 +354,6 @@ function ContentLayout({
 
         <main
           ref={mainRef}
-          onClick={handleAnchorClick}
           style={{ flex: 1, overflow: "auto", paddingLeft: "1.5rem" }}
         >
           {activeSection === "blog" && <BlogSection content={blogContent} />}

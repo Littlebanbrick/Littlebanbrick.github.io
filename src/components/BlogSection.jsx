@@ -1,6 +1,8 @@
 import ReactMarkdown from 'react-markdown';
 import rehypeRaw from 'rehype-raw';
 import remarkGfm from 'remark-gfm';
+import remarkMath from 'remark-math';
+import rehypeKatex from 'rehype-katex';
 import rehypeHeadingSlug from '../utils/rehype-heading-slug';
 import CardLink from './CardLink';
 
@@ -14,7 +16,7 @@ function BlogSection({ content }) {
       />
       <div style={{ marginTop: '2rem' }}>
         <div className="markdown-body" style={{ lineHeight: 1.8, color: 'var(--text)' }}>
-          <ReactMarkdown rehypePlugins={[rehypeRaw, rehypeHeadingSlug]} remarkPlugins={[remarkGfm]}>
+          <ReactMarkdown rehypePlugins={[rehypeRaw, rehypeHeadingSlug, rehypeKatex]} remarkPlugins={[remarkGfm, remarkMath]}>
             {content}
           </ReactMarkdown>
         </div>

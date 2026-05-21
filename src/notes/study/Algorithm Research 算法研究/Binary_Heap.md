@@ -216,9 +216,9 @@ The `heapifyDownMax` function is identical to the min-heap `heapifyDown` except 
 
 #### 1.3.3 Why This Is O(n) / 为什么这是 O(n)
 
-The complexity analysis is the same as for the standard O(n) heapify (see Section 3.1 for the full proof). In brief: most nodes are near the leaves and sink zero or one level during `heapifyDown`. The few nodes near the root sink O(log n) levels, but there are so few of them that the total work sums to O(n) (We will prove this, rigorously, in Section 3.1.4). The existing min-heap order provides no shortcut — conversion does not become sub-O(n) — but neither does it impose any extra cost beyond what building a max-heap from an arbitrary array would require. The asymptotic complexity is Θ(n) in all cases.
+The complexity analysis is the same as for the standard O(n) heapify. In brief: most nodes are near the leaves and sink zero or one level during `heapifyDown`. The few nodes near the root sink O(log n) levels, but there are so few of them that the total work sums to O(n) (We will prove this, rigorously, in Section 3.1.4). The existing min-heap order provides no shortcut — conversion does not become sub-O(n) — but neither does it impose any extra cost beyond what building a max-heap from an arbitrary array would require. The asymptotic complexity is Θ(n) in all cases.
 
-复杂度分析与标准 O(n) heapify 相同（完整证明见第 3.1.4 节）。简言之：大多数节点靠近叶子，在 `heapifyDown` 中下沉零层或一层。少数靠近根的节点下沉 O(log n) 层，但它们的数量极少，总工作量加起来是 O(n)（这一点我们会在第 3.1 节中严谨证明）。已有的最小堆顺序不提供捷径——转换复杂度不会低于 O(n)——但也不会带来超出从任意数组建最大堆所需的额外代价。所有情况下渐近复杂度都是 Θ(n)。
+复杂度分析与标准 O(n) heapify 相同。简言之：大多数节点靠近叶子，在 `heapifyDown` 中下沉零层或一层。少数靠近根的节点下沉 O(log n) 层，但它们的数量极少，总工作量加起来是 O(n)（这一点我们会在第 3.1.4 节中严谨证明）。已有的最小堆顺序不提供捷径——转换复杂度不会低于 O(n)——但也不会带来超出从任意数组建最大堆所需的额外代价。所有情况下渐近复杂度都是 Θ(n)。
 
 #### 1.3.4 What This Question Tests / 这道题考什么
 
