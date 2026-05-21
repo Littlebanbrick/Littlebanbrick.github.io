@@ -50,7 +50,7 @@ export default function rehypeHeadingSlug() {
         }
       }
 
-      if (node.children) {
+      if (Array.isArray(node.children)) {
         for (const child of node.children) {
           walk(child);
         }

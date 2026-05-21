@@ -154,6 +154,21 @@ function ContentLayout({
     mainRef.current?.scrollTo({ top: 0, behavior: "smooth" });
   };
 
+  /** Intercept anchor link clicks and scroll `main` (the real scroll container). */
+  const handleAnchorClick = (e) => {
+    const anchor = e.target.closest('a[href^="#"]');
+    if (!anchor || !mainRef.current) return;
+    e.preventDefault();
+    const id = anchor.getAttribute("href").slice(1);
+    const el = document.getElementById(id);
+    if (el) {
+      const cr = mainRef.current.getBoundingClientRect();
+      const er = el.getBoundingClientRect();
+      const top = er.top - cr.top + mainRef.current.scrollTop - 20;
+      mainRef.current.scrollTo({ top, behavior: "smooth" });
+    }
+  };
+
   const [studyCategories, setStudyCategories] = useState([]);
   const [essayCategories, setEssayCategories] = useState([]);
   const [blogContent, setBlogContent] = useState("");
@@ -340,6 +355,7 @@ function ContentLayout({
 
         <main
           ref={mainRef}
+          onClick={handleAnchorClick}
           style={{ flex: 1, overflow: "auto", paddingLeft: "1.5rem" }}
         >
           {activeSection === "blog" && <BlogSection content={blogContent} />}
