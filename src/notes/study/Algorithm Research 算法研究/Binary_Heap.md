@@ -6,7 +6,7 @@
 
 <span style="color:grey">
 
-Tips / 提示：  
+Tips / 提示：
 
 This article Part 1 explains the properties of heaps and some simple algorithms that are commonly tested in data structure courses; Part 2 covers slightly more advanced content, including three modules: heap sorting, Top-K problem, and Top-K frequent elements problem, the latter two of which are classic algorithm exam questions; Part 3 delves deeper into the architecture and algorithmic roles of heaps. Feel free to jump to the corresponding section as needed.
 
@@ -40,7 +40,7 @@ Why does this data structure exist rather than just using a sorted array? A sort
 
 为什么需要这个数据结构而不是直接用排序数组？排序数组提供 O(1) 时间取最小值，但插入新元素需要 O(n)，因为所有更大的元素必须右移腾出空间。堆同样提供 O(1) 取最小值，而插入和提取都仅需 O(log n)。正是这种组合——常数时间访问最小值、对数时间更新——使堆成为任何在集合变动中**反复需要“当前最小”元素**的算法的首选数据结构。
 
-By the way, a natural question arises: why represent a heap with an array at all? A binary tree can also be built with linked nodes — each node storing its value and pointers to its left and right children. In principle, a heap *can* be implemented that way. But the array representation has three decisive advantages that make it the universal choice in both textbooks and production code.
+By the way, a natural question arises: why represent a heap with an array at all? A binary tree can also be built with linked nodes — each node storing its value and pointers to its left and right children. In principle, a heap _can_ be implemented that way. But the array representation has three decisive advantages that make it the universal choice in both textbooks and production code.
 
 对了，一个自然的问题是：为什么要用数组表示堆？二叉树同样可以用链式节点来构建——每个节点存储其值和指向左右孩子的指针。原则上，堆*可以*那样实现。但数组表示有三个决定性优势，使它成为教材和工程代码中的普遍选择。
 
@@ -79,7 +79,7 @@ void push(MinHeap *heap, int value) {
 }
 ```
 
-**Pop (Extract-Min)** removes the root — the minimum element. The algorithm moves the last element of the array (the rightmost leaf) into the root position, decrements the size, and calls `heapifyDown` on the new root. The `heapifyDown` operation compares the element with its two children. If the element is larger than at least one child, it swaps with the *smaller* of the two children — so that the smaller child rises to become the new parent, preserving the min-heap property. The process repeats until the element is no longer larger than either child, or it reaches a leaf. Each swap moves the element down one level, so the worst-case cost is O(log n).
+**Pop (Extract-Min)** removes the root — the minimum element. The algorithm moves the last element of the array (the rightmost leaf) into the root position, decrements the size, and calls `heapifyDown` on the new root. The `heapifyDown` operation compares the element with its two children. If the element is larger than at least one child, it swaps with the _smaller_ of the two children — so that the smaller child rises to become the new parent, preserving the min-heap property. The process repeats until the element is no longer larger than either child, or it reaches a leaf. Each swap moves the element down one level, so the worst-case cost is O(log n).
 
 **Pop（弹出最小）** 移除根——最小元素。算法将数组最后一个元素（最右叶子）移至根位置，减小 size，然后对新根调用 `heapifyDown`。`heapifyDown` 操作将元素与其两个孩子比较。若元素大于至少一个孩子，则与两个孩子中*较小的那个*交换——使较小的孩子升起成为新父节点，保持最小堆性质。在新位置重复此过程，直到元素不再大于任何孩子，或抵达叶子。每次交换将元素下移一层，最坏成本 O(log n)。
 
@@ -94,7 +94,7 @@ int pop(MinHeap *heap) {
 }
 ```
 
-**Delete (Remove by Value)** is the most involved of the three. Unlike pop, which always targets the root, deletion must first locate the target element within the array — a linear scan taking O(n) time in the worst case, since a heap provides no efficient search by value (it is ordered only vertically, not horizontally). Once the target index is found, the algorithm replaces it with the last element of the array (the rightmost leaf), decrements the size, and then must decide which direction to restore. If the replacement element is smaller than the original occupant of that position, it may need to bubble *up* to satisfy the heap property against ancestors. If it is larger, it may need to sink *down* against descendants. An elegant unified approach is to call `heapifyDown` first (which handles the "too large" case) and then `heapifyUp` (which handles the "too small" case). At most one of these will actually perform work — if the element sank, it is now deeper in the tree and cannot be smaller than any ancestor it already satisfied; if it didn't sink, it might still be too small for its parent, so `heapifyUp` takes care of it. The scan dominates, giving O(n) worst-case time, with the heap restoration contributing O(log n).
+**Delete (Remove by Value)** is the most involved of the three. Unlike pop, which always targets the root, deletion must first locate the target element within the array — a linear scan taking O(n) time in the worst case, since a heap provides no efficient search by value (it is ordered only vertically, not horizontally). Once the target index is found, the algorithm replaces it with the last element of the array (the rightmost leaf), decrements the size, and then must decide which direction to restore. If the replacement element is smaller than the original occupant of that position, it may need to bubble _up_ to satisfy the heap property against ancestors. If it is larger, it may need to sink _down_ against descendants. An elegant unified approach is to call `heapifyDown` first (which handles the "too large" case) and then `heapifyUp` (which handles the "too small" case). At most one of these will actually perform work — if the element sank, it is now deeper in the tree and cannot be smaller than any ancestor it already satisfied; if it didn't sink, it might still be too small for its parent, so `heapifyUp` takes care of it. The scan dominates, giving O(n) worst-case time, with the heap restoration contributing O(log n).
 
 **Delete（按值删除）** 是三者中最复杂的。不同于总是针对根的 pop，删除必须先定位目标元素在数组中的位置——需要一次线性扫描，最坏情况 O(n)，因为堆不支持按值高效搜索（它只在垂直方向有序，水平方向无序）。一旦找到目标下标，算法将其替换为数组最后一个元素（最右叶子），减小 size，然后必须决定向哪个方向恢复堆性质。如果替换进来的元素比该位置原来的元素小，它可能需要向*上*浮以修复与祖先的关系；如果更大，可能需要向*下*沉以修复与后代的关系。一种优雅的统一做法是先调用 `heapifyDown`（处理“太大”的情况），再调用 `heapifyUp`（处理“太小”的情况）。两者至多只有一方会真正工作——如果元素下沉了，它现在在树中更深的位置，不可能比已经满足关系的祖先更小；如果没下沉，它可能仍比父节点小，`heapifyUp` 接手处理。线性扫描主导复杂度，总最坏 O(n)，堆恢复部分贡献 O(log n)。
 
@@ -181,21 +181,21 @@ A question that frequently appears on exams: given an array already arranged as 
 
 #### 1.3.1 Why `heapifyUp` Does Not Work / 为什么 heapifyUp 不行
 
-The `heapifyUp` operation fixes a *single* violation: a node that is too small relative to its parent. It does this by walking the node upward along the root-to-leaf chain, swapping as needed, until the parent-child relationship is restored. This works for insertion precisely because insertion appends a new element at the leaf, and only that element may violate the heap property — every other node was already part of a valid heap before the insertion.
+The `heapifyUp` operation fixes a _single_ violation: a node that is too small relative to its parent. It does this by walking the node upward along the root-to-leaf chain, swapping as needed, until the parent-child relationship is restored. This works for insertion precisely because insertion appends a new element at the leaf, and only that element may violate the heap property — every other node was already part of a valid heap before the insertion.
 
 `heapifyUp` 修复的是*单一*违规：一个节点相对于其父节点太小。它通过沿着根到叶子的链向上走，按需交换，直到父子关系恢复。这恰好适用于插入操作，因为插入将新元素追加在叶子处，只有这个元素可能违反堆性质——插入之前，其他所有节点都已经是合法堆的一部分。
 
-But when converting between heap types, the entire array starts in a state that violates the *target* heap property globally. If we iterate from the root downward calling `heapifyUp` on each node, we assume each node's ancestors already satisfy the target heap property. That assumption is false at the beginning — the root itself might be wrong. The `heapifyUp` operation checks the parent; if the parent is not yet a valid max-heap node (it might be smaller than its own parent), fixing the current node against it accomplishes nothing — the violation simply propagates upward and may never be resolved correctly.
+But when converting between heap types, the entire array starts in a state that violates the _target_ heap property globally. If we iterate from the root downward calling `heapifyUp` on each node, we assume each node's ancestors already satisfy the target heap property. That assumption is false at the beginning — the root itself might be wrong. The `heapifyUp` operation checks the parent; if the parent is not yet a valid max-heap node (it might be smaller than its own parent), fixing the current node against it accomplishes nothing — the violation simply propagates upward and may never be resolved correctly.
 
 但在堆类型转换时，整个数组初始就处于全局违反*目标*堆性质的状态。如果从根向叶子依次对每个节点调用 `heapifyUp`，我们就假定了每个节点的祖先已经满足目标堆性质。这个假设一开始就不成立——根本身可能就是错的。`heapifyUp` 检查父节点；如果父节点还不是一个合法的最大堆节点（它可能比自己的父节点小），那么把当前节点相对它修复毫无意义——违规只是向上传播，可能永远无法被正确解决。
 
 #### 1.3.2 The Correct Algorithm: Bottom-Up `heapifyDown` / 正确的算法：自底向上的 heapifyDown
 
-The correct approach is the **O(n) heapify algorithm** covered in depth in Section 3.1. The idea is to process the array from bottom to top, calling `heapifyDown` — not `heapifyUp` — on every non-leaf node, using the target heap's comparison direction. The key insight is that `heapifyDown` fixes a node by looking *downward*: it assumes the node's two subtrees are already valid heaps, and sinks the node into the correct position among them. Since leaves trivially satisfy any heap property, we can start from the lowest non-leaf node (index `⌊n/2⌋ - 1` in 0-indexed notation) and work backward to the root. By the time a node is processed, both its left and right subtrees are already valid heaps of the target type, so `heapifyDown` can do its work correctly.
+The correct approach is the **O(n) heapify algorithm** covered in depth in Section 3.1. The idea is to process the array from bottom to top, calling `heapifyDown` — not `heapifyUp` — on every non-leaf node, using the target heap's comparison direction. The key insight is that `heapifyDown` fixes a node by looking _downward_: it assumes the node's two subtrees are already valid heaps, and sinks the node into the correct position among them. Since leaves trivially satisfy any heap property, we can start from the lowest non-leaf node (index `⌊n/2⌋ - 1` in 0-indexed notation) and work backward to the root. By the time a node is processed, both its left and right subtrees are already valid heaps of the target type, so `heapifyDown` can do its work correctly.
 
 正确的做法是第 3.1 节深入讲解的 **O(n) heapify 算法**。其思想是自底向上处理数组，对每个非叶节点调用 `heapifyDown`——而不是 `heapifyUp`——使用目标堆的比较方向。关键洞察在于 `heapifyDown` 通过向*下*看修复节点：它假定节点的两个子树已经是合法堆，然后在该节点下沉到子树中的正确位置。由于叶子天然满足任何堆性质，我们可以从最低的非叶节点（0 索引下下标 `⌊n/2⌋ - 1`）开始，向根逆序处理。当处理到一个节点时，它的左右子树都已经是以它为根的、目标类型的合法堆，因此 `heapifyDown` 可以正确地完成工作。
 
-To convert a min-heap to a max-heap: for `i` from `n/2 - 1` down to `0`, call `heapifyDown` configured for a max-heap — where the parent must be *larger* than its children, and a swap chooses the larger of the two children. The original min-heap arrangement is ignored; the O(n) heapify algorithm imposes the max-heap property from scratch. Conversely, converting a max-heap to a min-heap uses the same procedure with a min-heap comparator.
+To convert a min-heap to a max-heap: for `i` from `n/2 - 1` down to `0`, call `heapifyDown` configured for a max-heap — where the parent must be _larger_ than its children, and a swap chooses the larger of the two children. The original min-heap arrangement is ignored; the O(n) heapify algorithm imposes the max-heap property from scratch. Conversely, converting a max-heap to a min-heap uses the same procedure with a min-heap comparator.
 
 将最小堆转换为最大堆：`i` 从 `n/2 - 1` 递减到 `0`，调用为最大堆配置的 `heapifyDown`——父节点必须*大于*孩子，交换时选择两个孩子中较大的那个。原有的最小堆排列被忽略；O(n) heapify 算法从零开始强制执行最大堆性质。反过来，最大堆转最小堆用相同的过程，只是用最小堆比较器。
 
@@ -210,7 +210,7 @@ void convertToMaxHeap(MinHeap *heap) {
 }
 ```
 
-The `heapifyDownMax` function is identical to the min-heap `heapifyDown` except that it selects the *larger* child for swapping. We skip the specific C implementation.
+The `heapifyDownMax` function is identical to the min-heap `heapifyDown` except that it selects the _larger_ child for swapping. We skip the specific C implementation.
 
 `heapifyDownMax` 与最小堆的 `heapifyDown` 相同，只是它选择*较大的*孩子进行交换。具体的C语言实现我们略去。
 
@@ -222,7 +222,7 @@ The complexity analysis is the same as for the standard O(n) heapify. In brief: 
 
 #### 1.3.4 What This Question Tests / 这道题考什么
 
-This exam question is pedagogically subtle. It tests whether the student understands that the heap property is about local parent-child relationships and not a global sorted order — and, more importantly, whether they understand *which* direction a heap repair operation works in. Mistaking `heapifyUp` for `heapifyDown` is a common and revealing error. The student who reaches for `heapifyUp` has memorized the operations but not grasped the structural invariant each one depends on. The student who recognizes the O(n) heapify algorithm as the correct tool — and can explain why — has understood the heap at a deeper level.
+This exam question is pedagogically subtle. It tests whether the student understands that the heap property is about local parent-child relationships and not a global sorted order — and, more importantly, whether they understand _which_ direction a heap repair operation works in. Mistaking `heapifyUp` for `heapifyDown` is a common and revealing error. The student who reaches for `heapifyUp` has memorized the operations but not grasped the structural invariant each one depends on. The student who recognizes the O(n) heapify algorithm as the correct tool — and can explain why — has understood the heap at a deeper level.
 
 这道考题在教学上很微妙。它检验学生是否理解堆性质关乎局部父子关系而非全局排序顺序——并且，更重要的是，是否理解堆修复操作*向哪个方向*工作。将 `heapifyUp` 误作 `heapifyDown` 是一个常见且暴露本质的错误。伸手拿 `heapifyUp` 的学生背下了操作但没有领悟每个操作所依赖的结构不变量。认出 O(n) heapify 算法才是正确工具——并能解释为什么——的学生，已经在更深层次上理解了堆。
 
@@ -274,7 +274,7 @@ A natural extension of the Top-K problem adds a frequency dimension. Given an ar
 
 Top-K 问题的一个自然延伸加入了频率维度。给定一个含 N 个元素的数组（可能包含重复），找到出现频率最高的 K 个元素。问题不再关乎元素的原值，而关乎它们的计数。
 
-The solution has two stages. First, build a frequency map — traverse the array and count how many times each distinct element appears. This can be done with a hash table in O(N) expected time. Second, use a **min-heap of size K** (note the inversion: this time it's a min-heap, because we want to maintain the top K *largest* frequencies and evict the smallest among them). Iterate through the frequency map's entries. For each (element, count) pair: if the heap has fewer than K elements, push it. Otherwise, compare the entry's count with the root's count. If the entry's count is larger than the root's count, pop the root and push the entry. At the end, the min-heap contains the K most frequent elements (they can be extracted in any order; the heap guarantees they are the correct set, not that they are sorted internally).
+The solution has two stages. First, build a frequency map — traverse the array and count how many times each distinct element appears. This can be done with a hash table in O(N) expected time. Second, use a **min-heap of size K** (note the inversion: this time it's a min-heap, because we want to maintain the top K _largest_ frequencies and evict the smallest among them). Iterate through the frequency map's entries. For each (element, count) pair: if the heap has fewer than K elements, push it. Otherwise, compare the entry's count with the root's count. If the entry's count is larger than the root's count, pop the root and push the entry. At the end, the min-heap contains the K most frequent elements (they can be extracted in any order; the heap guarantees they are the correct set, not that they are sorted internally).
 
 解法分为两个阶段。首先，构建频率映射——遍历数组，统计每个不同元素出现的次数。这可以用哈希表在 O(N) 期望时间内完成。其次，使用一个**大小为 K 的最小堆**（注意反转：这次是最小堆，因为我们要维护频率*最大*的 K 个，淘汰其中频率最小的那个）。遍历频率映射的条目。对每个（元素, 计数）对：如果堆中元素少于 K 个，直接压入。否则，将条目的计数与根的计数比较。若条目的计数大于根的计数，弹出根，压入条目。最终，最小堆中包含频率最高的 K 个元素（它们可以任意顺序提取；堆保证它们是正确的集合，而非内部已排序）。
 
@@ -282,7 +282,7 @@ The time complexity is O(N + M log K), where M is the number of distinct element
 
 时间复杂度为 O(N + M log K)，其中 M 是不同元素的个数。最坏情况 M = N，复杂度 O(N log K)。空间复杂度 O(M) 用于哈希表，O(K) 用于堆。
 
-Notice the design pattern that emerges across the heap applications we've seen. When you need the K *smallest* raw values, you use a max-heap to guard the threshold (the K-th smallest so far). When you need the K *largest* frequencies, you use a min-heap to guard the threshold (the K-th largest so far). The choice of heap type is always the *opposite* of what you might naively guess, because the heap's root is the element most likely to be evicted — you want the worst among the current candidates at the root, so that the better ones stay inside. This "opposite-direction heap" pattern is one of the most elegant recurring motifs in heap algorithm design.
+Notice the design pattern that emerges across the heap applications we've seen. When you need the K _smallest_ raw values, you use a max-heap to guard the threshold (the K-th smallest so far). When you need the K _largest_ frequencies, you use a min-heap to guard the threshold (the K-th largest so far). The choice of heap type is always the _opposite_ of what you might naively guess, because the heap's root is the element most likely to be evicted — you want the worst among the current candidates at the root, so that the better ones stay inside. This "opposite-direction heap" pattern is one of the most elegant recurring motifs in heap algorithm design.
 
 注意，在我们见过的堆应用中出现了一个设计模式。当你需要 K 个*最小*的原值时，用最大堆守门（目前第 K 小的那个）。当你需要 K 个*最大*的频率时，用最小堆守门（目前第 K 大的那个）。堆类型的选择总是与你朴素猜测*相反*，因为堆的根是最有可能被淘汰的元素——你希望当前候选元素中最差的那个待在根的位置，这样更好的才能留在堆内。这种“反向堆”模式是堆算法设计中最优雅的反复出现的主题之一。
 
@@ -312,7 +312,7 @@ A recurring challenge in algorithm design is pattern recognition: given a proble
 
 **信号五：多路归并。** 当你需要将 M 个有序序列归并成一个有序输出时，大小为 M 的最小堆，每个序列的当前队首元素存入其中，是教科书式的解法。无论是归并 M 个有序数组，还是在外排序中每个归并段的当前元素汇入 k 路归并，都适用。堆在每输出一个元素时，用 O(log M) 时间找到 M 个候选中的全局最小值。
 
-**A note of caution.** Not every problem with the word "smallest" needs a heap. If the problem requires the output to be fully sorted, a heap alone is insufficient — you would need to call `pop` repeatedly and collect the results in order, which is, in effect, heap sort. And if the problem involves static data with no insertions or deletions after the initial construction, the O(n) selection algorithm (quickselect) for finding the K-th smallest element may be faster than a heap. The heap's true power is in *dynamic* settings, where the collection changes over time and the minimum must remain immediately accessible.
+**A note of caution.** Not every problem with the word "smallest" needs a heap. If the problem requires the output to be fully sorted, a heap alone is insufficient — you would need to call `pop` repeatedly and collect the results in order, which is, in effect, heap sort. And if the problem involves static data with no insertions or deletions after the initial construction, the O(n) selection algorithm (quickselect) for finding the K-th smallest element may be faster than a heap. The heap's true power is in _dynamic_ settings, where the collection changes over time and the minimum must remain immediately accessible.
 
 **一点提醒。** 不是所有带“最小”一词的问题都需要堆。如果问题要求输出完全有序，仅靠堆是不够的——你需要反复 `pop` 并按顺序收集结果，那实质上就是堆排序。如果问题涉及静态数据，初始构建后没有插入或删除，那么用于找第 K 小元素的 O(n) 选择算法（quickselect）可能比堆更快。堆真正的威力在*动态*场景中，集合随时间变化而最小值必须立即可得。
 
@@ -426,7 +426,7 @@ The Fibonacci heap is, however, notoriously complex to implement and has large c
 
 #### 3.2.4 What This Teaches Us About Heaps / 这教会我们关于堆的什么
 
-The takeaway is not just that heaps speed up Dijkstra and Prim. It's that the *choice of heap* matters, and different heaps optimize different operations. A binary heap is simple and balanced — all core operations are O(log n). A Fibonacci heap bets everything on making `decreaseKey` blazing fast, at the cost of complexity elsewhere. Understanding these tradeoffs is what separates memorizing algorithms from thinking about data structures as design choices.
+The takeaway is not just that heaps speed up Dijkstra and Prim. It's that the _choice of heap_ matters, and different heaps optimize different operations. A binary heap is simple and balanced — all core operations are O(log n). A Fibonacci heap bets everything on making `decreaseKey` blazing fast, at the cost of complexity elsewhere. Understanding these tradeoffs is what separates memorizing algorithms from thinking about data structures as design choices.
 
 收获不仅在于堆能加速 Dijkstra 和 Prim。更在于*堆的选择*是重要的，不同的堆优化不同的操作。二叉堆简单均衡——所有核心操作都是 O(log n)。斐波那契堆把一切押注在让 `decreaseKey` 极快上，代价是其他方面的复杂性。理解这些权衡，正是区分“背诵算法”和“把数据结构当作设计选择来思考”的分界线。
 
@@ -574,10 +574,10 @@ To close this section with a concrete empirical demonstration, I ran a simple ex
 
 为这一节做一个具体的实证演示，我运行了一个简单的实验，对比标准数组二叉堆和左偏堆的合并性能。设置如下：生成两个堆，每个包含 2 亿个随机整数，然后合并它们。对二叉堆而言，合并意味着拼接两个数组并调用 `heapifyDown` 重建——一个 O(n) 操作。对左偏堆而言，合并使用递归的 `leftist_merge` 函数——一个 O(log n) 操作。实验在约 20 GB 可用内存的笔记本上进行，使用不触发页面交换的最大数据量。三次运行取平均的结果：
 
-| Heap Type / 堆类型 | Data Size / 数据量 | Merge Time / 合并耗时 |
-|---|---|---|
-| Array-based binary heap / 数组二叉堆 | 2 × 200,000,000 | ~3.13 seconds / 秒 |
-| Leftist heap / 左偏堆 | 2 × 200,000,000 | < 0.000001 seconds / 秒 |
+| Heap Type / 堆类型                   | Data Size / 数据量 | Merge Time / 合并耗时   |
+| ------------------------------------ | ------------------ | ----------------------- |
+| Array-based binary heap / 数组二叉堆 | 2 × 200,000,000    | ~3.13 seconds / 秒      |
+| Leftist heap / 左偏堆                | 2 × 200,000,000    | < 0.000001 seconds / 秒 |
 
 The binary heap, despite using the cache-friendly array representation that gives it excellent constant factors for push and pop, required over three seconds to merge two large heaps — time entirely spent in the O(n) rebuild. The leftist heap, despite the pointer-chasing overhead of its linked-node representation, completed the merge in a time too small to measure at double-precision clock resolution. The logarithmic right-path descent is so fast that it vanished into the noise floor of the timing infrastructure.
 
@@ -601,20 +601,20 @@ This experiment underscores the central tradeoff of mergeable heaps. An array-ba
  #include <stdlib.h>
  #include <time.h>
  #include <limits.h>
- 
+
  #define UPPERBOUND INT_MAX
- 
+
  void FatalError() {
      printf("Memory allocation failed!\n");
      exit(0);
  }
- 
+
  /* ---------- Ordinary Min-Heap (array-based) ---------- */
  typedef struct {
      int size;
      int *data;
  } minheap;
- 
+
  /* ---------- Leftist Heap (linked nodes) ---------- */
  typedef struct leftist_node {
      int data;
@@ -622,9 +622,9 @@ This experiment underscores the central tradeoff of mergeable heaps. An array-ba
      struct leftist_node *left;
      struct leftist_node *right;
  } leftist_node;
- 
+
  typedef leftist_node* leftist_heap;
- 
+
  /* ---------- Min-Heap operations ---------- */
  minheap *create_minheap(int capacity) {
      minheap *heap = (minheap *)malloc(sizeof(minheap));
@@ -634,7 +634,7 @@ This experiment underscores the central tradeoff of mergeable heaps. An array-ba
      if (heap->data == NULL) FatalError();
      return heap;
  }
- 
+
  void minheap_percolate_down(minheap *heap, int hole) {
      int child;
      int tmp = heap->data[hole];
@@ -649,7 +649,7 @@ This experiment underscores the central tradeoff of mergeable heaps. An array-ba
      }
      heap->data[hole] = tmp;
  }
- 
+
  minheap *build_heap(int size) {
      minheap *heap = create_minheap(size);
      heap->size = size;
@@ -659,7 +659,7 @@ This experiment underscores the central tradeoff of mergeable heaps. An array-ba
          minheap_percolate_down(heap, i);
      return heap;
  }
- 
+
  minheap *merge_minheap(minheap *heap1, minheap *heap2) {
      int total = heap1->size + heap2->size;
      minheap *new_heap = create_minheap(total);
@@ -672,19 +672,19 @@ This experiment underscores the central tradeoff of mergeable heaps. An array-ba
          minheap_percolate_down(new_heap, k);
      return new_heap;
  }
- 
+
  void minheap_free(minheap *heap) {
      free(heap->data);
      free(heap);
  }
- 
+
  /* ---------- Leftist Heap operations ---------- */
  static void leftist_swap_children(leftist_heap h) {
      leftist_node *tmp = h->left;
      h->left = h->right;
      h->right = tmp;
  }
- 
+
  leftist_heap leftist_merge(leftist_heap h1, leftist_heap h2) {
      if (h1 == NULL) return h2;
      if (h2 == NULL) return h1;
@@ -699,7 +699,7 @@ This experiment underscores the central tradeoff of mergeable heaps. An array-ba
      h1->npl = (h1->right == NULL) ? 0 : h1->right->npl + 1;
      return h1;
  }
- 
+
  leftist_heap leftist_insert(leftist_heap h, int x) {
      leftist_node *node = (leftist_node *)malloc(sizeof(leftist_node));
      if (node == NULL) FatalError();
@@ -708,21 +708,21 @@ This experiment underscores the central tradeoff of mergeable heaps. An array-ba
      node->left = node->right = NULL;
      return leftist_merge(h, node);
  }
- 
+
  leftist_heap build_leftist_heap(int *arr, int size) {
      leftist_heap h = NULL;
      for (int i = 0; i < size; i++)
          h = leftist_insert(h, arr[i]);
      return h;
  }
- 
+
  void leftist_free(leftist_heap h) {
      if (h == NULL) return;
      leftist_free(h->left);
      leftist_free(h->right);
      free(h);
  }
- 
+
  /* ---------- Main program ---------- */
  int main() {
      int n;
@@ -731,34 +731,34 @@ This experiment underscores the central tradeoff of mergeable heaps. An array-ba
          printf("Invalid input.\n");
          return 1;
      }
- 
+
      srand((unsigned int)time(NULL));
- 
+
      printf("Building two min-heaps of size %d...\n", n);
      minheap *mh1 = build_heap(n);
      minheap *mh2 = build_heap(n);
- 
+
      printf("Building two leftist heaps of size %d...\n", n);
      leftist_heap lh1 = build_leftist_heap(mh1->data, mh1->size);
      leftist_heap lh2 = build_leftist_heap(mh2->data, mh2->size);
- 
+
      clock_t start = clock();
      minheap *mh_merged = merge_minheap(mh1, mh2);
      clock_t end = clock();
      double minheap_time = (double)(end - start) / CLOCKS_PER_SEC;
      printf("Min-heap merge time: %f seconds\n", minheap_time);
- 
+
      start = clock();
      leftist_heap lh_merged = leftist_merge(lh1, lh2);
      end = clock();
      double leftist_time = (double)(end - start) / CLOCKS_PER_SEC;
      printf("Leftist heap merge time: %f seconds\n", leftist_time);
- 
+
      minheap_free(mh1);
      minheap_free(mh2);
      minheap_free(mh_merged);
      leftist_free(lh_merged);
- 
+
      return 0;
  }
 ```
@@ -772,12 +772,14 @@ A binomial heap takes a fundamentally different approach from the leftist heap. 
 二项堆采用了一种与左偏堆根本不同的方法。它不维护一棵带有巧妙局部不变量的树，而是维护一个**二项树**的**森林**，每棵树各自遵守堆性质，并通过一条模仿二进制加法的结构规则来组织它们。结果是，合并两个堆不再像外科手术，而更像算术运算。
 
 **Binomial trees.** A binomial tree of order \(k\), denoted \(B_k\), is defined recursively:
+
 - \(B_0\) is a single node.
-- \(B_k\) is formed by taking two \(B_{k-1}\) trees and making the root of one the leftmost child of the root of the other.
+- \(B*k\) is formed by taking two \(B*{k-1}\) trees and making the root of one the leftmost child of the root of the other.
 
 **二项树。** 一棵 \(k\) 阶二项树，记为 \(B_k\)，递归定义如下：
+
 - \(B_0\) 是单个节点。
-- \(B_k\) 由两棵 \(B_{k-1}\) 树将其中一棵的根作为另一棵根的最左孩子而形成。
+- \(B*k\) 由两棵 \(B*{k-1}\) 树将其中一棵的根作为另一棵根的最左孩子而形成。
 
 Below is the ASCII structure diagram of the binary tree from \(B_0\) to \(B_4\):  
 以下是二项树 \(B_0\) 到 \(B_4\) 的 ASCII 结构图：
@@ -820,10 +822,9 @@ B4:  4
      |-- 0
 ```
 
+The recursive structure can be clearly seen from the figure: the root of \(B*k\) has \(k\) children, which are \(B*{k-1}, B*{k-2}, \ldots, B_0\) from left to right. This is exactly the natural result when two \(B*{k-1}\) are merged (with one becoming the leftmost child of the other).
 
-The recursive structure can be clearly seen from the figure: the root of \(B_k\) has \(k\) children, which are \(B_{k-1}, B_{k-2}, \ldots, B_0\) from left to right. This is exactly the natural result when two \(B_{k-1}\) are merged (with one becoming the leftmost child of the other).  
-
-从图中可以清晰看到递归构造：\(B_k\) 的根有 \(k\) 个孩子，从左到右依次是 \(B_{k-1}, B_{k-2}, \dots, B_0\)，这正是将两棵 \(B_{k-1}\) 合并时（其中一棵成为另一棵的最左孩子）自然产生的结果。
+从图中可以清晰看到递归构造：\(B*k\) 的根有 \(k\) 个孩子，从左到右依次是 \(B*{k-1}, B*{k-2}, \dots, B_0\)，这正是将两棵 \(B*{k-1}\) 合并时（其中一棵成为另一棵的最左孩子）自然产生的结果。
 
 From this definition, a \(B_k\) tree has exactly \(2^k\) nodes, its root has degree \(k\), and the children of the root are themselves binomial trees of orders \(k-1, k-2, \dots, 0\) (from left to right). The number of nodes at depth \(d\) in \(B_k\) is the binomial coefficient \(\binom{k}{d}\), which gives the structure its name.
 
@@ -874,7 +875,7 @@ BinomialNode *merge_root_lists(BinomialNode *h1, BinomialNode *h2) {
 }
 ```
 
-**Phase 2: Linking trees of equal order — the carry propagation.** After Phase 1, we walk through the merged root list with three pointers — `prev`, `x`, and `next` — where `x` and `next` are two consecutive trees under inspection. If `x->order != next->order`, there is no conflict; we simply advance all three pointers. If `x->order == next->order`, we have a collision. We link the two trees: the root with the larger key becomes a child of the root with the smaller key, producing a tree of one order higher. This linked tree is conceptually a "carry" — and it must now be compared against the *next* tree in the list, because it might collide with that tree as well. A third tree of the same order may even be waiting (the original carry from a previous link plus two trees from the list). The case analysis handles this cleanly.
+**Phase 2: Linking trees of equal order — the carry propagation.** After Phase 1, we walk through the merged root list with three pointers — `prev`, `x`, and `next` — where `x` and `next` are two consecutive trees under inspection. If `x->order != next->order`, there is no conflict; we simply advance all three pointers. If `x->order == next->order`, we have a collision. We link the two trees: the root with the larger key becomes a child of the root with the smaller key, producing a tree of one order higher. This linked tree is conceptually a "carry" — and it must now be compared against the _next_ tree in the list, because it might collide with that tree as well. A third tree of the same order may even be waiting (the original carry from a previous link plus two trees from the list). The case analysis handles this cleanly.
 
 **阶段二：链接同阶树——进位传播。** 第一阶段之后，我们用三个指针 `prev`、`x`、`next` 遍历合并后的根链表，其中 `x` 和 `next` 是正在检查的两棵相邻树。如果 `x->order != next->order`，没有冲突，三个指针直接前进。如果 `x->order == next->order`，发生碰撞。我们链接这两棵树：键较大的根成为键较小根的孩子，产生一棵高一阶的树。这棵链接后的树概念上是一个“进位”——它现在必须与链表中的*下一棵*树比较，因为它可能与那棵树再次碰撞。同一阶甚至可能有三棵树等着（之前链接留下的进位加上链表中的两棵）。情况分析能干净地处理这些。
 
@@ -927,9 +928,9 @@ BinomialNode *binomial_heap_union(BinomialNode *h1, BinomialNode *h2) {
 }
 ```
 
-**Walkthrough of the case analysis.** The key insight is that after Phase 1, at most two trees can share a given order (one originally from \(H_1\), one from \(H_2\)). However, after linking two trees of order \(k\), the resulting tree has order \(k+1\), which may collide with an existing \(B_{k+1}\) in the list. This can cascade, just as binary addition can cascade carries across multiple bit positions.
+**Walkthrough of the case analysis.** The key insight is that after Phase 1, at most two trees can share a given order (one originally from \(H*1\), one from \(H_2\)). However, after linking two trees of order \(k\), the resulting tree has order \(k+1\), which may collide with an existing \(B*{k+1}\) in the list. This can cascade, just as binary addition can cascade carries across multiple bit positions.
 
-**情况分析走一遍。** 关键洞察是第一阶段之后，同一个阶至多有两棵树（一棵来自 \(H_1\)，一棵来自 \(H_2\)）。然而，链接两棵 \(k\) 阶树之后，得到的树阶为 \(k+1\)，它可能与链表中已有的 \(B_{k+1}\) 碰撞。这可以级联传播，正如二进制加法中进位可以跨多个位传播。
+**情况分析走一遍。** 关键洞察是第一阶段之后，同一个阶至多有两棵树（一棵来自 \(H*1\)，一棵来自 \(H_2\)）。然而，链接两棵 \(k\) 阶树之后，得到的树阶为 \(k+1\)，它可能与链表中已有的 \(B*{k+1}\) 碰撞。这可以级联传播，正如二进制加法中进位可以跨多个位传播。
 
 The condition in the `if` statement covers both scenarios that avoid linking:
 
@@ -938,7 +939,7 @@ The condition in the `if` statement covers both scenarios that avoid linking:
 - **`x->order != next->order`:** No collision at this order. All three pointers advance.
   **`x->order != next->order`：** 该阶无碰撞。三个指针直接前进。
 
-- **`next->sibling != NULL && next->sibling->order == x->order`:** There are *three* consecutive trees of the same order — `x`, `next`, and `next->sibling`. In this case, we skip linking `x` and `next` for now; `x` will become the result tree of this order, and `next` will be linked with `next->sibling` in the next iteration. This is exactly the "3 trees → keep 1, link the other 2 as carry" rule from the binary addition analogy.
+- **`next->sibling != NULL && next->sibling->order == x->order`:** There are _three_ consecutive trees of the same order — `x`, `next`, and `next->sibling`. In this case, we skip linking `x` and `next` for now; `x` will become the result tree of this order, and `next` will be linked with `next->sibling` in the next iteration. This is exactly the "3 trees → keep 1, link the other 2 as carry" rule from the binary addition analogy.
   **`next->sibling != NULL && next->sibling->order == x->order`：** 存在*三棵*同阶的连续树——`x`、`next` 和 `next->sibling`。此时我们不链接 `x` 和 `next`；`x` 将成为该阶的结果树，`next` 将在下一轮迭代中与 `next->sibling` 链接。这恰好对应二进制加法类比中的“3 棵树 → 留 1 棵，链接另 2 棵作为进位”的规则。
 
 When the condition is false, `x` and `next` share the same order and there is no third tree of that order — exactly the "2 trees → link as carry" case. We link them, and the resulting tree (with order increased by 1) becomes the new `x`, ready to be compared against the next tree in the list.
@@ -959,15 +960,15 @@ This loop processes the entire root list in a single pass. The number of trees i
 
 #### 3.3.4 Fibonacci Heaps: The Name, the Philosophy, and the "Do Nothing" Strategy / 斐波那契堆：名字、哲学与“什么都不做”策略
 
-**Why "Fibonacci"?** The name comes not from the heap's shape, but from its analysis. When Fredman and Tarjan invented this data structure in 1984, they proved that the amortized running times of its operations are bounded by expressions involving Fibonacci numbers. Specifically, the maximum degree of any node in a Fibonacci heap of \(n\) nodes is at most \(O(\log_{\phi} n)\), where \(\phi = (1+\sqrt{5})/2 \approx 1.618\) is the golden ratio — the limiting ratio of consecutive Fibonacci numbers. The proof uses the fact that a node of degree \(k\) must have a subtree of size at least \(F_{k+2}\), the \((k+2)\)-th Fibonacci number. This logarithmic degree bound is what keeps `extract-min` efficient even though the heap is allowed to become messy between extractions. The Fibonacci sequence is baked into the data structure's worst-case guarantees, and the name stuck.
+**Why "Fibonacci"?** The name comes not from the heap's shape, but from its analysis. When Fredman and Tarjan invented this data structure in 1984, they proved that the amortized running times of its operations are bounded by expressions involving Fibonacci numbers. Specifically, the maximum degree of any node in a Fibonacci heap of \(n\) nodes is at most \(O(\log*{\phi} n)\), where \(\phi = (1+\sqrt{5})/2 \approx 1.618\) is the golden ratio — the limiting ratio of consecutive Fibonacci numbers. The proof uses the fact that a node of degree \(k\) must have a subtree of size at least \(F*{k+2}\), the \((k+2)\)-th Fibonacci number. This logarithmic degree bound is what keeps `extract-min` efficient even though the heap is allowed to become messy between extractions. The Fibonacci sequence is baked into the data structure's worst-case guarantees, and the name stuck.
 
-**为什么叫“斐波那契”？** 名字并非来自堆的形状，而是来自它的分析。1984 年 Fredman 和 Tarjan 发明这个数据结构时，证明了其操作的均摊运行时间受涉及斐波那契数的表达式所约束。具体来说，一个有 \(n\) 个节点的斐波那契堆中，任意节点的最大度数不超过 \(O(\log_{\phi} n)\)，其中 \(\phi = (1+\sqrt{5})/2 \approx 1.618\) 是黄金比例——连续斐波那契数之比的极限。证明用到了这样一个事实：一个度数为 \(k\) 的节点必须拥有一棵大小至少为 \(F_{k+2}\)（第 \(k+2\) 个斐波那契数）的子树。这个对数级别的度上界使得 `extract-min` 保持高效，即使堆在两次提取之间被允许变得凌乱。斐波那契数列被烘焙进了数据结构的最坏情况保证里，名字由此而来。
+**为什么叫“斐波那契”？** 名字并非来自堆的形状，而是来自它的分析。1984 年 Fredman 和 Tarjan 发明这个数据结构时，证明了其操作的均摊运行时间受涉及斐波那契数的表达式所约束。具体来说，一个有 \(n\) 个节点的斐波那契堆中，任意节点的最大度数不超过 \(O(\log*{\phi} n)\)，其中 \(\phi = (1+\sqrt{5})/2 \approx 1.618\) 是黄金比例——连续斐波那契数之比的极限。证明用到了这样一个事实：一个度数为 \(k\) 的节点必须拥有一棵大小至少为 \(F*{k+2}\)（第 \(k+2\) 个斐波那契数）的子树。这个对数级别的度上界使得 `extract-min` 保持高效，即使堆在两次提取之间被允许变得凌乱。斐波那契数列被烘焙进了数据结构的最坏情况保证里，名字由此而来。
 
-**The paradox of "doing nothing."** When I first read about Fibonacci heaps, I was baffled. A heap is supposed to maintain order — how can a data structure that allegedly "does nothing" possibly keep the heap property intact? The resolution of this paradox is the central insight behind the Fibonacci heap, and it hinges on the distinction between *deferring* work and *not doing* it.
+**The paradox of "doing nothing."** When I first read about Fibonacci heaps, I was baffled. A heap is supposed to maintain order — how can a data structure that allegedly "does nothing" possibly keep the heap property intact? The resolution of this paradox is the central insight behind the Fibonacci heap, and it hinges on the distinction between _deferring_ work and _not doing_ it.
 
 **“什么都不做”的悖论。** 我第一次读到斐波那契堆时，完全被搞糊涂了。堆应该维护顺序——一个号称“什么都不做”的数据结构怎么可能保持堆性质？这个悖论的解决正是斐波那契堆背后的核心洞察，它取决于区分*推迟*工作和*不做*工作。
 
-The Fibonacci heap **does maintain the heap property at all times**. Every tree in the forest is individually a valid min-heap: every parent is smaller than its children. This is never violated. What the Fibonacci heap refuses to do — unlike the binomial heap — is clean up the *structure* of the forest between extractions. A binomial heap cleans up immediately: after every insertion or merge, it ensures that there is at most one tree of each order. A Fibonacci heap lets trees of the same order accumulate. It lets the root list grow messy. It lets nodes lose children without immediate structural repair. But the heap property — the only invariant that determines correctness — is always locally maintained on every parent-child edge.
+The Fibonacci heap **does maintain the heap property at all times**. Every tree in the forest is individually a valid min-heap: every parent is smaller than its children. This is never violated. What the Fibonacci heap refuses to do — unlike the binomial heap — is clean up the _structure_ of the forest between extractions. A binomial heap cleans up immediately: after every insertion or merge, it ensures that there is at most one tree of each order. A Fibonacci heap lets trees of the same order accumulate. It lets the root list grow messy. It lets nodes lose children without immediate structural repair. But the heap property — the only invariant that determines correctness — is always locally maintained on every parent-child edge.
 
 斐波那契堆**时刻维护着堆性质**。森林中的每棵树各自都是一个合法的最小堆：每个父节点小于其孩子。这从未被违反。斐波那契堆拒绝做的——与二项堆不同——是在两次提取之间清理森林的*结构*。二项堆立刻清理：每次插入或合并后，它确保每阶至多一棵树。斐波那契堆允许同阶树累积。它允许根链表变得凌乱。它允许节点失去孩子而不做即时结构修复。但堆性质——决定正确性的唯一不变量——在每条父子边上始终被局部维护。
 
@@ -975,11 +976,11 @@ The "doing nothing" refers only to structural tidying. The heap property is neve
 
 “什么都不做”仅指结构整理。堆性质从未妥协。这是关键区别：正确性不变量被急切维护；性能优化被懒惰推迟。
 
-**Where it actually does work: extract-min.** If the Fibonacci heap never cleaned up, the root list would grow arbitrarily long, and scanning all roots to find the minimum — required by `extract-min` — would become O(n) instead of O(log n). So the cleanup *does* happen, but only at `extract-min` time. When the minimum root is removed, its children are added to the root list, and then a **consolidation** step runs. Consolidation repeatedly takes two trees of equal degree and links them — exactly the same linking operation as in the binomial heap — until no two roots share the same degree. The work that a binomial heap spreads across every insertion and merge is collected into a single pass in the Fibonacci heap. Insert and merge are therefore O(1); `extract-min` becomes O(log n) amortized, paying for the deferred cleanup.
+**Where it actually does work: extract-min.** If the Fibonacci heap never cleaned up, the root list would grow arbitrarily long, and scanning all roots to find the minimum — required by `extract-min` — would become O(n) instead of O(log n). So the cleanup _does_ happen, but only at `extract-min` time. When the minimum root is removed, its children are added to the root list, and then a **consolidation** step runs. Consolidation repeatedly takes two trees of equal degree and links them — exactly the same linking operation as in the binomial heap — until no two roots share the same degree. The work that a binomial heap spreads across every insertion and merge is collected into a single pass in the Fibonacci heap. Insert and merge are therefore O(1); `extract-min` becomes O(log n) amortized, paying for the deferred cleanup.
 
 **它真正干活的地方：extract-min。** 如果斐波那契堆从不清理，根链表将无限增长，扫描所有根来找最小值——`extract-min` 必需的步骤——会变成 O(n) 而非 O(log n)。所以清理*确实*会发生，只是发生在 `extract-min` 的时刻。当最小根被移除，其孩子被加入根链表，然后一个**合并**步骤运行。合并反复取出两棵度相同的树并将它们链接——与二项堆中完全相同的链接操作——直到没有两个根共享相同的度。二项堆分散在每次插入和合并中的工作，在斐波那契堆中被集中到一趟扫描中。插入和合并因此是 O(1)；`extract-min` 变为均摊 O(log n)，为推迟的清理买单。
 
-**Decrease-key: the crowning achievement.** The decrease-key operation is where the Fibonacci heap truly departs from its binomial ancestor and earns its theoretical fame. In a binomial heap, decreasing a key and then bubbling up is O(log n). The Fibonacci heap does something far more aggressive: when a node's key is decreased, it is simply **cut** from its parent and moved to the root list. No bubbling up. No immediate repair of any kind, beyond marking the parent as having lost a child. If a parent loses a second child, it is itself cut and moved to the root list — a cascading effect that can propagate upward. This "cut and cascade" policy is what achieves amortized O(1) for decrease-key: each individual cut is O(1), and the amortized analysis charges the rare cascading cuts against earlier insertions and decreases. The heap property remains intact because the cut node was only ever made *smaller*, so it can only violate the heap property with respect to its ancestors (from which it is now severed). Once in the root list, it is a valid single-node heap.
+**Decrease-key: the crowning achievement.** The decrease-key operation is where the Fibonacci heap truly departs from its binomial ancestor and earns its theoretical fame. In a binomial heap, decreasing a key and then bubbling up is O(log n). The Fibonacci heap does something far more aggressive: when a node's key is decreased, it is simply **cut** from its parent and moved to the root list. No bubbling up. No immediate repair of any kind, beyond marking the parent as having lost a child. If a parent loses a second child, it is itself cut and moved to the root list — a cascading effect that can propagate upward. This "cut and cascade" policy is what achieves amortized O(1) for decrease-key: each individual cut is O(1), and the amortized analysis charges the rare cascading cuts against earlier insertions and decreases. The heap property remains intact because the cut node was only ever made _smaller_, so it can only violate the heap property with respect to its ancestors (from which it is now severed). Once in the root list, it is a valid single-node heap.
 
 **Decrease-key：顶峰成就。** Decrease-key 操作是斐波那契堆真正脱离其二项堆祖先并赢得理论名声的地方。在二项堆中，降低一个键值然后向上冒泡是 O(log n)。斐波那契堆做了远为激进的事：当一个节点的键值被降低时，它被简单地从父节点**切下**并移至根链表。没有向上冒泡。没有任何形式的即时修复，除了将父节点标记为失去了一个孩子。如果一个父节点失去第二个孩子，它自己被切下并移至根链表——一个可以向上传播的级联效应。这种“切割并级联”策略是 decrease-key 达到均摊 O(1) 的原因：每次单独切割是 O(1)，而均摊分析将罕见的级联切割分摊到更早的插入和降低操作上。堆性质保持完好，因为被切的节点只是被变得更*小*了，所以它只会相对于其祖先违反堆性质（而它现在已经与它们分离）。进入根链表后，它是一棵合法的单节点堆。
 
@@ -987,7 +988,7 @@ The "doing nothing" refers only to structural tidying. The heap property is neve
 
 **“什么都不做”哲学总结。** 斐波那契堆是一次将惰性求值应用于数据结构的大师课。它识别出哪些操作是频繁的（插入、合并、decrease-key），通过将结构整理推迟到罕见但不可避免的 `extract-min`，使它们尽可能便宜。堆性质——正确性不变量——每时每刻都被维护。只有结构整洁——性能不变量——被推迟了。这就是为什么斐波那契堆在两次提取之间看起来凌乱：同阶的多棵树，失去孩子的节点，根链表是一团乱麻而非整齐的有序序列。但当下一次 `extract-min` 使账单到期时，合并步骤一趟高效扫描恢复秩序。结果是一个优先队列，其中除 `extract-min` 外所有操作的均摊时间为 O(1)，而 `extract-min` 本身为均摊 O(log n)。已知没有其他堆数据结构能达到这组均摊界限。
 
-**A sober note on practicality.** Despite its theoretical elegance, the Fibonacci heap is notoriously absent from standard libraries (C++ STL uses a binary heap; Java's `PriorityQueue` uses a binary heap; Python's `heapq` uses a binary heap) and almost never appears in competitive programming or LeetCode problems. The reasons are twofold. First, the implementation is genuinely complex — hundreds of lines of pointer manipulation, delicate case analysis for cascading cuts, and an auxiliary degree-indexed array for consolidation. Second, the constant factors are large. In practice, a well-tuned binary heap or a simpler structure like the pairing heap often outperforms the Fibonacci heap on realistic input sizes. The "amortized O(1)" decrease-key is a theoretical victory that rarely translates to wall-clock superiority unless the graph is enormous and decrease-key operations outnumber extract-min by a huge margin. That said, the Fibonacci heap remains one of the most important *theoretical* data structures in computer science. Its invention in 1984 resolved an open problem about the optimal complexity of Dijkstra's algorithm, and its design principles — deferred work, amortized analysis via potential functions, and cascading cleanup — have influenced generations of data structure research. It is a structure to be understood for its ideas, not one to be reached for when building a web server or solving a LeetCode medium. In Fredman and Tarjan's own words, the Fibonacci heap is "primarily of theoretical interest."
+**A sober note on practicality.** Despite its theoretical elegance, the Fibonacci heap is notoriously absent from standard libraries (C++ STL uses a binary heap; Java's `PriorityQueue` uses a binary heap; Python's `heapq` uses a binary heap) and almost never appears in competitive programming or LeetCode problems. The reasons are twofold. First, the implementation is genuinely complex — hundreds of lines of pointer manipulation, delicate case analysis for cascading cuts, and an auxiliary degree-indexed array for consolidation. Second, the constant factors are large. In practice, a well-tuned binary heap or a simpler structure like the pairing heap often outperforms the Fibonacci heap on realistic input sizes. The "amortized O(1)" decrease-key is a theoretical victory that rarely translates to wall-clock superiority unless the graph is enormous and decrease-key operations outnumber extract-min by a huge margin. That said, the Fibonacci heap remains one of the most important _theoretical_ data structures in computer science. Its invention in 1984 resolved an open problem about the optimal complexity of Dijkstra's algorithm, and its design principles — deferred work, amortized analysis via potential functions, and cascading cleanup — have influenced generations of data structure research. It is a structure to be understood for its ideas, not one to be reached for when building a web server or solving a LeetCode medium. In Fredman and Tarjan's own words, the Fibonacci heap is "primarily of theoretical interest."
 
 **关于实用性的冷静提醒。** 尽管有理论上的优雅，斐波那契堆在标准库中几乎不存在（C++ STL 用二叉堆；Java `PriorityQueue` 用二叉堆；Python `heapq` 用二叉堆），且几乎不出现在算法竞赛或 LeetCode 题目中。原因有二。第一，实现确实复杂——数百行的指针操作，级联切割的精密情况分析，以及合并用的按度索引的辅助数组。第二，常数因子很大。实践中，精心调优的二叉堆或配对堆等更简单的结构，在现实输入规模上往往超越斐波那契堆。“均摊 O(1)”的 decrease-key 是一场理论胜利，除非图极为庞大且 decrease-key 操作以巨大优势压倒 extract-min，它很少转化为墙上时钟的优势。话虽如此，斐波那契堆仍是计算机科学中最重要的*理论*数据结构之一。它 1984 年的发明解决了关于 Dijkstra 算法最优复杂度的开放问题，其设计原则——推迟工作、通过势函数进行均摊分析、级联清理——影响了几代数据结构研究。这是一个因其思想而值得被理解的结构，而非一个在搭建 web 服务器或做 LeetCode 中等题时会伸手去拿的家伙。用 Fredman 和 Tarjan 自己的话说，斐波那契堆“主要具有理论兴趣”。
 
@@ -1007,7 +1008,7 @@ External sorting traditionally proceeds in two phases. **Phase 1: Run generation
 
 外排序传统上分为两个阶段。**阶段一：生成归并段。** 读入一块能装入内存的数据，在内存中对其排序（用快速排序、归并排序或堆排序——这部分在内存中很快），将排好序的块作为“归并段”写回磁盘。重复直到整个数据集处理完毕。如果数据集有 \(N\) 个元素，内存一次能容纳 \(B\) 个元素，这一阶段会产生 \(M = \lceil N/B \rceil\) 个已排序的归并段。**阶段二：多路归并。** 将全部 \(M\) 个归并段合并成一个全局有序的输出。堆正是在此时登场。
 
-Why is merging \(M\) sorted sequences non-trivial? Each run is internally sorted, so the smallest *overall* element must be the first element of one of the runs. To output elements in globally sorted order, we must repeatedly answer the question: "among the current front elements of all \(M\) runs, which is the smallest?" A naive approach scans all \(M\) candidates for each output element, taking \(O(M)\) per element and \(O(N \cdot M)\) in total. When \(M\) is large — say, hundreds or thousands of runs — this linear scan becomes the bottleneck that defeats the purpose of external sorting.
+Why is merging \(M\) sorted sequences non-trivial? Each run is internally sorted, so the smallest _overall_ element must be the first element of one of the runs. To output elements in globally sorted order, we must repeatedly answer the question: "among the current front elements of all \(M\) runs, which is the smallest?" A naive approach scans all \(M\) candidates for each output element, taking \(O(M)\) per element and \(O(N \cdot M)\) in total. When \(M\) is large — say, hundreds or thousands of runs — this linear scan becomes the bottleneck that defeats the purpose of external sorting.
 
 为什么合并 \(M\) 个有序序列并非易事？每个归并段内部有序，因此全局*最小*元素必定是某个归并段的第一个元素。要以全局有序的顺序输出元素，我们必须反复回答这个问题：“在所有 \(M\) 个归并段当前的首元素中，哪个最小？”朴素做法对每个输出元素都扫描全部 \(M\) 个候选者，每元素 \(O(M)\)，总计 \(O(N \cdot M)\)。当 \(M\) 很大时——比如数百或数千个归并段——这次线性扫描就变成了瓶颈，背离了外排序的初衷。
 
@@ -1018,7 +1019,7 @@ A min-heap of size \(M\) solves this exactly. The algorithm is as direct as it i
 1. Initialize a min-heap. For each of the \(M\) runs, read its first element and push it into the heap, along with an identifier indicating which run it came from.
    初始化一个最小堆。对 \(M\) 个归并段中的每一个，读取其首元素并将其压入堆中，同时记录它来自哪个归并段。
 
-2. While the heap is not empty: pop the minimum element, write it to the output. Then, read the *next* element from the same run that produced the popped element, and push it into the heap. If that run is exhausted, simply continue without pushing.
+2. While the heap is not empty: pop the minimum element, write it to the output. Then, read the _next_ element from the same run that produced the popped element, and push it into the heap. If that run is exhausted, simply continue without pushing.
    当堆非空时：弹出最小元素，写入输出。然后，从刚弹出的元素所属的同一归并段中读取*下一个*元素，压入堆中。如果该归并段已耗尽，跳过压入步骤继续。
 
 3. When the heap becomes empty, the merge is complete.
@@ -1195,7 +1196,7 @@ After mastering the dual-heap approach for a dynamic data stream in Problem 295,
 
 在掌握第 295 题中动态数据流的双堆方法后，我转向了更难的变体——第 480 题“滑动窗口中位数”。任务相同（找到一组数字的中位数），但多了一个转折：集合是一个固定大小 \(k\) 的滑动窗口，在数组上移动。窗口滑动时，一个元素离开，一个元素进入。每次移动都必须重新计算中位数。带着前一题的自信，我写了一个解法：对每个窗口，遍历 \(k\) 个元素从头构建两个新堆。令我惊讶的是，它不仅没通过性能测试——还给出了错误答案。暴露出几个误解，纠正它们显著加深了我对双堆模式的理解。
 
-**Misconception 1: Alternating insertion is enough.** My initial code decided which heap to insert into based solely on their relative sizes: "if the two heaps have equal size, push to `left`; otherwise push to `right`." This keeps the sizes balanced but completely ignores the *values* of the elements. As a result, a very small number might be placed in `right` (the larger half) and a very large number in `left` (the smaller half), shattering the invariant that every element in `left` ≤ every element in `right`. Once this invariant collapses, the heap tops no longer frame the median — the entire structure loses its meaning. The correct rule, as Problem 295 enforces, is: **compare the incoming element with `left`'s maximum first**, and only then balance the sizes. Value-based partitioning is the invariant; size balancing is merely a maintenance step that assumes the invariant already holds. Getting this backwards is the single most common mistake with dual heaps.
+**Misconception 1: Alternating insertion is enough.** My initial code decided which heap to insert into based solely on their relative sizes: "if the two heaps have equal size, push to `left`; otherwise push to `right`." This keeps the sizes balanced but completely ignores the _values_ of the elements. As a result, a very small number might be placed in `right` (the larger half) and a very large number in `left` (the smaller half), shattering the invariant that every element in `left` ≤ every element in `right`. Once this invariant collapses, the heap tops no longer frame the median — the entire structure loses its meaning. The correct rule, as Problem 295 enforces, is: **compare the incoming element with `left`'s maximum first**, and only then balance the sizes. Value-based partitioning is the invariant; size balancing is merely a maintenance step that assumes the invariant already holds. Getting this backwards is the single most common mistake with dual heaps.
 
 **误解一：交替插入就够了。** 我最初的代码仅根据两个堆的相对大小来决定插入哪个堆：“如果两个堆大小相等，插入 `left`；否则插入 `right`。”这保持了大小平衡，但完全忽略了元素的*值*。结果，一个很小的数可能被放入 `right`（较大的一半），一个很大的数可能被放入 `left`（较小的一半），打破了“`left` 中每个元素 ≤ `right` 中每个元素”的不变量。一旦这个不变量崩塌，两个堆顶就不再框定中位数——整个结构失去了意义。正确的规则，正如第 295 题所执行的，是：**先将待插入元素与 `left` 的最大值比较**，然后再平衡大小。基于值的划分是不变量；大小平衡仅仅是假设不变量已经成立后的维护步骤。把这两者颠倒，是双堆法最常见的一个错误。
 
@@ -1207,11 +1208,11 @@ After mastering the dual-heap approach for a dynamic data stream in Problem 295,
 
 **惰性删除的机制。** 当元素离开滑动窗口时，我们**不**立即尝试在堆中定位并提取它。相反，我们在一个单独的哈希表中记录：“此值已计划删除”，为该值递增一个计数器。该元素物理上仍留在堆中，占据空间，参与树结构。同时，我们为该元素所属的堆递减一个**有效大小**计数器——堆的逻辑大小更新了，但物理大小未变。该元素变成了一个“幽灵”：存在于数组中，但不再被算作堆的合法成员。
 
-**The pruning step.** The danger is clear: if a ghost element floats to the top of the heap — because it is the smallest (or, in a max-heap simulation, the largest) — then every `top()` or `pop()` operation will see a value that has already left the window, producing incorrect results. This is where **pruning** comes in. Before reading the top of a heap, and after every heap operation that changes the structure, we repeatedly check: is the current top element a ghost? If its value exists in the hash table with a count greater than zero, we physically pop it from the heap, decrement the hash table counter, and check the new top. We repeat until the top is a genuinely active element — or the heap is empty. The physical `pop` during pruning truly shrinks the heap's physical size. Only after pruning does the heap's top reliably reflect the minimum (or maximum) among *active* elements.
+**The pruning step.** The danger is clear: if a ghost element floats to the top of the heap — because it is the smallest (or, in a max-heap simulation, the largest) — then every `top()` or `pop()` operation will see a value that has already left the window, producing incorrect results. This is where **pruning** comes in. Before reading the top of a heap, and after every heap operation that changes the structure, we repeatedly check: is the current top element a ghost? If its value exists in the hash table with a count greater than zero, we physically pop it from the heap, decrement the hash table counter, and check the new top. We repeat until the top is a genuinely active element — or the heap is empty. The physical `pop` during pruning truly shrinks the heap's physical size. Only after pruning does the heap's top reliably reflect the minimum (or maximum) among _active_ elements.
 
 **剪枝步骤。** 危险是显然的：如果一个幽灵元素浮到了堆顶——因为它是最小的（或在最大堆模拟中，是最大的）——那么每次 `top()` 或 `pop()` 操作都会看到一个已经离开窗口的值，产生错误结果。这就是**剪枝**发挥作用的地方。在读取堆顶之前，以及在每次改变结构的堆操作之后，我们反复检查：当前堆顶元素是不是幽灵？如果它的值在哈希表中且计数大于零，我们从堆中物理弹出它，递减哈希表计数器，再检查新的堆顶。重复此过程直到堆顶是一个真正活跃的元素——或者堆变为空。剪枝过程中的物理 `pop` 真正缩小了堆的物理大小。只有在剪枝之后，堆顶才可靠地反映*活跃*元素中的最小值（或最大值）。
 
-**Does lazy deletion break the size balancing?** A legitimate concern: the two heaps are physically holding ghost elements, so their actual array sizes may be larger than their effective sizes. Does the size balancing logic — which uses effective sizes — become unreliable? The answer is no, provided the pruning step is called at the right moments. The effective size correctly tracks how many *real* elements are in each heap, and the size balancing step only ever moves one real element at a time (the top, which pruning guarantees is real). Ghost elements deep in the heap do not affect the position of real elements — they simply add inert nodes that are eventually cleaned when they reach the top. The worst-case scenario is that many ghost elements accumulate, slightly increasing the height of the heap and thus the constant factor of subsequent operations. But since the maximum number of ghost elements at any moment is at most \(k\) (each element leaves the window at most once), and each will be pruned exactly once when it reaches the top, the amortized complexity remains \(O(\log k)\) per operation.
+**Does lazy deletion break the size balancing?** A legitimate concern: the two heaps are physically holding ghost elements, so their actual array sizes may be larger than their effective sizes. Does the size balancing logic — which uses effective sizes — become unreliable? The answer is no, provided the pruning step is called at the right moments. The effective size correctly tracks how many _real_ elements are in each heap, and the size balancing step only ever moves one real element at a time (the top, which pruning guarantees is real). Ghost elements deep in the heap do not affect the position of real elements — they simply add inert nodes that are eventually cleaned when they reach the top. The worst-case scenario is that many ghost elements accumulate, slightly increasing the height of the heap and thus the constant factor of subsequent operations. But since the maximum number of ghost elements at any moment is at most \(k\) (each element leaves the window at most once), and each will be pruned exactly once when it reaches the top, the amortized complexity remains \(O(\log k)\) per operation.
 
 **惰性删除会破坏大小平衡吗？** 一个合理的疑虑是：两个堆物理上持有幽灵元素，它们的实际数组大小可能大于有效大小。使用有效大小的平衡逻辑会变得不可靠吗？答案是不会，前提是剪枝步骤在正确的时刻被调用。有效大小正确追踪每个堆中有多少*真正*元素，而大小平衡步骤每次只移动一个真正元素（堆顶，剪枝保证了它是真的）。堆深处的幽灵元素不影响真正元素的位置——它们只是添加了惰性节点，当它们到达堆顶时最终会被清理。最坏情况是许多幽灵元素积累，轻微增加堆的高度从而增大后续操作的常数因子。但由于任何时刻幽灵元素总数最多为 \(k\)（每个元素至多离开窗口一次），且每个元素在到达堆顶时恰好被剪枝一次，均摊复杂度保持每次操作 \(O(\log k)\)。
 
