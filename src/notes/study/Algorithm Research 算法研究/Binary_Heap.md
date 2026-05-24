@@ -1031,3 +1031,304 @@ Each heap operation — pop and push — costs \(O(\log M)\). For each of the \(
 Readers who worked through the array-merging problem before will recognize the pattern immediately. That problem asked us to merge \(N\) arrays of different sizes by repeatedly extracting the two smallest, adding their lengths, and inserting the sum. The multi-way merge here asks us to merge \(M\) sorted runs by repeatedly extracting the single smallest and inserting the next element from the corresponding run. The core mechanism is identical: a min-heap maintains the "current front" of every input sequence, and the global minimum is always at the top of the heap. The earlier problem was a \(K=2\) special case that built a Huffman tree; this one is a general \(K=M\) merging engine that drives real-world external storage systems. The progression from two-way to multi-way is a perfect illustration of how the same data structure — the binary heap — scales from an educational puzzle to a production algorithm.
 
 读过之前数组合并问题的读者会立刻认出这个模式。那道题要求我们合并 \(N\) 个不同大小的数组，通过反复提取最小的两个、相加、再插入。而此处的多路归并要求我们合并 \(M\) 个已排序归并段，通过反复提取最小的一个并插入来自对应段的下一元素。核心机制完全相同：一个最小堆维护每个输入序列的“当前队首”，全局最小值始终在堆顶。前一道题是构建 Huffman 树的 \(K=2\) 特例；这一道题是驱动真实世界外存储系统的通用 \(K=M\) 合并引擎。从二路到多路的进展完美展示了一个数据结构——二叉堆——如何从教学谜题扩展到生产级算法。
+
+### 3.5 Dual Heaps for Dynamic Median / 双堆维护动态中位数
+
+#### 3.5.1 LeetCode Problem 295: Find Median from Data Stream / LeetCode 第 295 题：数据流的中位数
+
+A classic problem that appears on LeetCode (Problem 295: "Find Median from Data Stream") asks: design a data structure that accepts a stream of integers and, at any moment, can report the median of all numbers seen so far. If the count is odd, the median is the middle element; if even, it is the average of the two middle elements. The naive approach — storing all numbers in an array and sorting it before each median query — costs \(O(n \log n)\) per query and is utterly impractical for large streams. The heap-based solution that achieves \(O(\log n)\) per insertion and \(O(1)\) per median query is an elegant demonstration of how two heaps with opposite ordering can collaborate to maintain a global partition.
+
+一道经典的 LeetCode 题目（第 295 题“数据流的中位数”）要求：设计一个数据结构，接收一个整数流，并能在任何时刻报告迄今为止所见所有数字的中位数。若总数为奇数，中位数是中间元素；若为偶数，是中间两个元素的平均值。朴素做法——将所有数字存入数组，每次查询前排序——每次查询 \(O(n \log n)\)，对大规模数据流完全不实用。基于堆的解法每次插入 \(O(\log n)\)，每次中位数查询 \(O(1)\)，优雅地展示了两个相反排序的堆如何协作维护一个全局划分。
+
+**The design.** Maintain two heaps. A **max-heap** (let's call it `left`) stores the smaller half of the numbers — the root of a max-heap is the largest in that half, which for the smaller half is precisely the element closest to the median. A **min-heap** (call it `right`) stores the larger half of the numbers — its root is the smallest in that half, again the element closest to the median. The invariant we enforce is:
+
+**设计。** 维护两个堆。一个**最大堆**（称为 `left`）存储较小的一半数字——最大堆的根是该半中最大的元素，对较小的一半来说，正是最靠近中位数的元素。一个**最小堆**（称为 `right`）存储较大的一半数字——它的根是该半中最小的元素，同样是最靠近中位数的元素。我们强制执行的不变量是：
+
+- Every element in `left` (the smaller half) is less than or equal to every element in `right` (the larger half). This is enforced by the insertion logic.
+  `left`（较小一半）中的每个元素都小于等于 `right`（较大一半）中的每个元素。这由插入逻辑强制执行。
+
+- The sizes of the two heaps differ by at most one. When the total count is odd, `left` is permitted to have one extra element; the median is then simply `left.top()`. When even, the two heaps are equal in size, and the median is the average of `left.top()` and `right.top()`.
+  两个堆的大小相差不超过一。总数为奇数时，允许 `left` 多一个元素；中位数就是 `left.top()`。总数为偶数时，两个堆大小相等，中位数是 `left.top()` 和 `right.top()` 的平均值。
+
+**Insertion logic.** When a new number arrives, we decide which heap it belongs to and then rebalance if necessary.
+
+**插入逻辑。** 当新数字到达时，先判断它属于哪个堆，必要时再重新平衡。
+
+1. If `left` is empty or the number is less than or equal to `left.top()` (the largest element in the smaller half), push it into `left`. Otherwise, push it into `right`.
+   若 `left` 为空，或该数字小于等于 `left.top()`（较小一半中的最大元素），压入 `left`。否则压入 `right`。
+
+2. Now check the size constraint. If `left` has more than `right->size + 1` elements, pop the maximum from `left` and push it into `right`. If `right` has more elements than `left`, pop the minimum from `right` and push it into `left`. After this rebalancing step, the invariant is restored.
+   现在检查大小约束。若 `left` 比 `right` 多出超过一个元素，从 `left` 弹出最大值并压入 `right`。若 `right` 元素比 `left` 多，从 `right` 弹出最小值并压入 `left`。经过此次重新平衡，不变量恢复。
+
+**Query logic.** After every insertion, the median can be read in \(O(1)\) time. If `left->size > right->size`, return `left.top()` (the extra element in the smaller half is the middle element). Otherwise, return `(left.top() + right.top()) / 2.0`.
+
+**查询逻辑。** 每次插入后，中位数可在 \(O(1)\) 时间内读出。若 `left->size > right->size`，返回 `left.top()`（较小一半中多出的那个元素就是中间元素）。否则返回 `(left.top() + right.top()) / 2.0`。
+
+**A worked example.** For the sequence `[1, 2, 3]`:
+
+**一个跑通的例子。** 对序列 `[1, 2, 3]`：
+
+```
+addNum(1): left = [1]          right = []            median = 1.0
+addNum(2): left = [1]          right = [2]           median = (1+2)/2 = 1.5
+addNum(3): left = [1]          right = [2,3]
+           // rebalance: right has 2, left has 1 → pop min from right
+           left = [2,1]        right = [3]           median = 2.0
+```
+
+The ASCII representation shows the internal states of both heaps as the stream grows. The rebalancing step after adding 3 is the critical moment: `right` briefly holds `[2,3]` with 2 at the root, but `left` only has one element, violating the size invariant. Popping 2 from `right` and pushing it into `left` restores balance and places 2 exactly at the median position.
+
+ASCII 图展示了随数据流增长两个堆的内部状态。添加 3 后的重新平衡是关键时刻：`right` 短暂持有 `[2,3]`，根为 2，但 `left` 只有一个元素，违反大小不变量。从 `right` 弹出 2 并压入 `left` 恢复了平衡，并恰好将 2 放在了中位数位置。
+
+**Implementation in C.** Below is a complete, runnable implementation of the `MedianFinder` class using a dual-heap design. **A max-heap is simulated by a min-heap that stores negated values.** Both heaps share the same `MinHeap` structure defined earlier in this series. The code is self-contained and can be directly compiled.
+
+**C 语言实现。** 以下是使用双堆设计的 `MedianFinder` 完整可运行实现。**最大堆通过一个存储负值的最小堆来模拟。** 两个堆共享本系列前面定义的 `MinHeap` 结构。代码自包含，可直接编译。
+
+```c
+typedef struct {
+    int *data;
+    int size;
+    int capacity;
+} MinHeap;
+
+MinHeap* createHeap(int capacity) {
+    MinHeap *h = (MinHeap*)malloc(sizeof(MinHeap));
+    h->capacity = capacity; h->size = 0;
+    h->data = (int*)malloc(capacity * sizeof(int));
+    return h;
+}
+
+void swap(int *a, int *b) { int t = *a; *a = *b; *b = t; }
+
+void heapifyUp(MinHeap *h, int i) {
+    int p = (i - 1) / 2;
+    while (i > 0 && h->data[i] < h->data[p]) {
+        swap(&h->data[i], &h->data[p]);
+        i = p; p = (i - 1) / 2;
+    }
+}
+
+void heapifyDown(MinHeap *h, int i) {
+    int l, r, smallest;
+    while (1) {
+        l = 2 * i + 1; r = 2 * i + 2; smallest = i;
+        if (l < h->size && h->data[l] < h->data[smallest]) smallest = l;
+        if (r < h->size && h->data[r] < h->data[smallest]) smallest = r;
+        if (smallest == i) break;
+        swap(&h->data[i], &h->data[smallest]);
+        i = smallest;
+    }
+}
+
+void push(MinHeap *h, int v) {
+    h->data[h->size] = v;
+    heapifyUp(h, h->size);
+    h->size++;
+}
+
+int pop(MinHeap *h) {
+    int top = h->data[0];
+    h->data[0] = h->data[--h->size];
+    heapifyDown(h, 0);
+    return top;
+}
+
+int top(MinHeap *h) { return h->data[0]; }
+
+// ---------- MedianFinder ----------
+typedef struct {
+    MinHeap *left;   // max-heap (stores negated values): smaller half
+    MinHeap *right;  // min-heap: larger half
+} MedianFinder;
+
+MedianFinder* medianFinderCreate() {
+    MedianFinder *obj = (MedianFinder*)malloc(sizeof(MedianFinder));
+    obj->left  = createHeap(50000);
+    obj->right = createHeap(50000);
+    return obj;
+}
+
+void medianFinderAddNum(MedianFinder *obj, int num) {
+    // Step 1: decide which heap to insert into
+    if (obj->left->size == 0 || num <= -top(obj->left))
+        push(obj->left, -num);    // negate for max-heap simulation
+    else
+        push(obj->right, num);
+
+    // Step 2: rebalance to maintain size invariant
+    if (obj->left->size > obj->right->size + 1) {
+        // left too large: move its max to right
+        int moved = -pop(obj->left);
+        push(obj->right, moved);
+    } else if (obj->right->size > obj->left->size) {
+        // right too large: move its min to left
+        int moved = pop(obj->right);
+        push(obj->left, -moved);
+    }
+}
+
+double medianFinderFindMedian(MedianFinder *obj) {
+    if (obj->left->size > obj->right->size)
+        return -top(obj->left);   // odd count, max of left is the median
+    else
+        return (-top(obj->left) + top(obj->right)) / 2.0;
+}
+
+void medianFinderFree(MedianFinder *obj) {
+    free(obj->left->data); free(obj->left);
+    free(obj->right->data); free(obj->right);
+    free(obj);
+}
+```
+
+**Complexity analysis.** Each `addNum` performs at most two heap insertions and two extractions, each \(O(\log n)\). The total cost per insertion is \(O(\log n)\). `findMedian` reads the top of at most two heaps — \(O(1)\). The space requirement is \(O(n)\). This is asymptotically optimal for a dynamic data stream: any data structure that maintains the median under insertions must perform at least \(\Omega(\log n)\) comparisons per insertion in the comparison model.
+
+**复杂度分析。** 每次 `addNum` 最多执行两次堆插入和两次堆提取，每次 \(O(\log n)\)。每次插入的总代价为 \(O(\log n)\)。`findMedian` 最多读取两个堆的堆顶——\(O(1)\)。空间需求 \(O(n)\)。这对动态数据流来说是渐近最优的：在比较模型中，任何在插入下维护中位数的数据结构每次插入至少需要 \(\Omega(\log n)\) 次比较。
+
+**Why this pattern is worth recognizing.** The dual-heap median finder is the canonical example of a broader design principle: when a problem asks for a "middle" value in a dynamic collection, two heaps — one for the lower half, one for the upper half — are almost always the answer. The same structure can be generalized to sliding window medians, to tracking arbitrary percentiles (by varying the size ratio of the two heaps), and to certain load-balancing problems where the goal is to split items evenly between two servers based on a dynamic threshold. The heap, once again, solves the problem not by fully sorting the data, but by maintaining exactly enough order to answer the query at hand.
+
+**为什么这个模式值得识别。** 双堆中位数查找器是一个更广泛设计原则的经典示例：当一个问题要求动态集合中的“中间”值时，两个堆——一个管下半，一个管上半——几乎总是答案。同样的结构可以推广到滑动窗口中位数、追踪任意百分位数（通过改变两个堆的大小比例）、以及某些负载均衡问题（目标是基于动态阈值将项目均分到两台服务器）。堆再一次解决了问题，不是通过完全排序数据，而是通过恰好维护回答当前查询所需的那一点顺序。
+
+#### 3.5.2 Beyond LeetCode 295: Sliding Window Median and Lessons Learned / LeetCode 295 之上：滑动窗口中位数与经验教训
+
+After mastering the dual-heap approach for a dynamic data stream in Problem 295, I moved on to its harder variant — Problem 480 "Sliding Window Median." The task is the same (find the median of a collection of numbers), but with an added twist: the collection is a sliding window of fixed size \(k\) moving across an array. When the window slides, one element leaves and one element enters. The median must be recomputed at each position. Confident from the previous problem, I wrote a solution that, for each window, simply built two fresh heaps from scratch by iterating through the \(k\) elements. To my surprise, it not only failed the performance tests — it produced wrong answers. Several misconceptions surfaced, and correcting them deepened my understanding of the dual-heap pattern considerably.
+
+在掌握第 295 题中动态数据流的双堆方法后，我转向了更难的变体——第 480 题“滑动窗口中位数”。任务相同（找到一组数字的中位数），但多了一个转折：集合是一个固定大小 \(k\) 的滑动窗口，在数组上移动。窗口滑动时，一个元素离开，一个元素进入。每次移动都必须重新计算中位数。带着前一题的自信，我写了一个解法：对每个窗口，遍历 \(k\) 个元素从头构建两个新堆。令我惊讶的是，它不仅没通过性能测试——还给出了错误答案。暴露出几个误解，纠正它们显著加深了我对双堆模式的理解。
+
+**Misconception 1: Alternating insertion is enough.** My initial code decided which heap to insert into based solely on their relative sizes: "if the two heaps have equal size, push to `left`; otherwise push to `right`." This keeps the sizes balanced but completely ignores the *values* of the elements. As a result, a very small number might be placed in `right` (the larger half) and a very large number in `left` (the smaller half), shattering the invariant that every element in `left` ≤ every element in `right`. Once this invariant collapses, the heap tops no longer frame the median — the entire structure loses its meaning. The correct rule, as Problem 295 enforces, is: **compare the incoming element with `left`'s maximum first**, and only then balance the sizes. Value-based partitioning is the invariant; size balancing is merely a maintenance step that assumes the invariant already holds. Getting this backwards is the single most common mistake with dual heaps.
+
+**误解一：交替插入就够了。** 我最初的代码仅根据两个堆的相对大小来决定插入哪个堆：“如果两个堆大小相等，插入 `left`；否则插入 `right`。”这保持了大小平衡，但完全忽略了元素的*值*。结果，一个很小的数可能被放入 `right`（较大的一半），一个很大的数可能被放入 `left`（较小的一半），打破了“`left` 中每个元素 ≤ `right` 中每个元素”的不变量。一旦这个不变量崩塌，两个堆顶就不再框定中位数——整个结构失去了意义。正确的规则，正如第 295 题所执行的，是：**先将待插入元素与 `left` 的最大值比较**，然后再平衡大小。基于值的划分是不变量；大小平衡仅仅是假设不变量已经成立后的维护步骤。把这两者颠倒，是双堆法最常见的一个错误。
+
+**Misconception 2: Rebuilding the heaps from scratch for each window is acceptable.** For a window of size \(k\) and an array of length \(n\), rebuilding two heaps from scratch at each of the \(n - k + 1\) positions costs \(O(k \log k)\) per window and \(O(n k \log k)\) total. When \(n\) and \(k\) both approach \(10^5\), this is catastrophically slow. The correct approach is to **maintain the two heaps incrementally** across window slides. But how do we remove an element that has left the window? A heap gives efficient access only to its top — finding and removing an arbitrary element buried deep in the tree would require a linear scan, destroying the \(O(\log k)\) guarantee. The solution is a technique called **lazy deletion**, and it requires a careful explanation of both its mechanics and its potential pitfalls.
+
+**误解二：每个窗口从头重建堆是可以接受的。** 对于大小为 \(k\) 的窗口和长度为 \(n\) 的数组，在 \(n - k + 1\) 个位置上每次从头重建两个堆，每个窗口代价 \(O(k \log k)\)，总计 \(O(n k \log k)\)。当 \(n\) 和 \(k\) 都接近 \(10^5\) 时，这是灾难性的慢。正确的做法是**在窗口滑动过程中增量维护两个堆**。但如何移除已离开窗口的元素？堆只提供对堆顶的高效访问——查找并删除深埋在树中的任意元素需要线性扫描，这会破坏 \(O(\log k)\) 的保证。解决方案是一种称为**惰性删除**的技术，我们需要仔细解释它的机制及其潜在陷阱。
+
+**The mechanics of lazy deletion.** When an element leaves the sliding window, we do **not** attempt to locate and extract it from the heap immediately. Instead, we record in a separate hash table: "this value is scheduled for deletion," incrementing a counter for that value. The element remains physically inside the heap, occupying space and participating in the tree structure. At the same time, we decrement an **effective size** counter for the heap that held it — so the heap's logical size is updated, but its physical size is not. The element becomes a "ghost": present in the array, but no longer counted as a legitimate member of the heap.
+
+**惰性删除的机制。** 当元素离开滑动窗口时，我们**不**立即尝试在堆中定位并提取它。相反，我们在一个单独的哈希表中记录：“此值已计划删除”，为该值递增一个计数器。该元素物理上仍留在堆中，占据空间，参与树结构。同时，我们为该元素所属的堆递减一个**有效大小**计数器——堆的逻辑大小更新了，但物理大小未变。该元素变成了一个“幽灵”：存在于数组中，但不再被算作堆的合法成员。
+
+**The pruning step.** The danger is clear: if a ghost element floats to the top of the heap — because it is the smallest (or, in a max-heap simulation, the largest) — then every `top()` or `pop()` operation will see a value that has already left the window, producing incorrect results. This is where **pruning** comes in. Before reading the top of a heap, and after every heap operation that changes the structure, we repeatedly check: is the current top element a ghost? If its value exists in the hash table with a count greater than zero, we physically pop it from the heap, decrement the hash table counter, and check the new top. We repeat until the top is a genuinely active element — or the heap is empty. The physical `pop` during pruning truly shrinks the heap's physical size. Only after pruning does the heap's top reliably reflect the minimum (or maximum) among *active* elements.
+
+**剪枝步骤。** 危险是显然的：如果一个幽灵元素浮到了堆顶——因为它是最小的（或在最大堆模拟中，是最大的）——那么每次 `top()` 或 `pop()` 操作都会看到一个已经离开窗口的值，产生错误结果。这就是**剪枝**发挥作用的地方。在读取堆顶之前，以及在每次改变结构的堆操作之后，我们反复检查：当前堆顶元素是不是幽灵？如果它的值在哈希表中且计数大于零，我们从堆中物理弹出它，递减哈希表计数器，再检查新的堆顶。重复此过程直到堆顶是一个真正活跃的元素——或者堆变为空。剪枝过程中的物理 `pop` 真正缩小了堆的物理大小。只有在剪枝之后，堆顶才可靠地反映*活跃*元素中的最小值（或最大值）。
+
+**Does lazy deletion break the size balancing?** A legitimate concern: the two heaps are physically holding ghost elements, so their actual array sizes may be larger than their effective sizes. Does the size balancing logic — which uses effective sizes — become unreliable? The answer is no, provided the pruning step is called at the right moments. The effective size correctly tracks how many *real* elements are in each heap, and the size balancing step only ever moves one real element at a time (the top, which pruning guarantees is real). Ghost elements deep in the heap do not affect the position of real elements — they simply add inert nodes that are eventually cleaned when they reach the top. The worst-case scenario is that many ghost elements accumulate, slightly increasing the height of the heap and thus the constant factor of subsequent operations. But since the maximum number of ghost elements at any moment is at most \(k\) (each element leaves the window at most once), and each will be pruned exactly once when it reaches the top, the amortized complexity remains \(O(\log k)\) per operation.
+
+**惰性删除会破坏大小平衡吗？** 一个合理的疑虑是：两个堆物理上持有幽灵元素，它们的实际数组大小可能大于有效大小。使用有效大小的平衡逻辑会变得不可靠吗？答案是不会，前提是剪枝步骤在正确的时刻被调用。有效大小正确追踪每个堆中有多少*真正*元素，而大小平衡步骤每次只移动一个真正元素（堆顶，剪枝保证了它是真的）。堆深处的幽灵元素不影响真正元素的位置——它们只是添加了惰性节点，当它们到达堆顶时最终会被清理。最坏情况是许多幽灵元素积累，轻微增加堆的高度从而增大后续操作的常数因子。但由于任何时刻幽灵元素总数最多为 \(k\)（每个元素至多离开窗口一次），且每个元素在到达堆顶时恰好被剪枝一次，均摊复杂度保持每次操作 \(O(\log k)\)。
+
+**The hash table implementation.** In C, where no built-in hash table exists, the choice depends on the constraints of the problem. For Problem 480, the element values range from \(-10^5\) to \(10^5\), a span of \(2 \times 10^5 + 1\) possible integers. This is small enough to use a simple **array** as a direct-access frequency table rather than a full hash table. We allocate an array `int *delayed` of size, say, 200001, offsetting each value by adding a constant (e.g., `val + 100000`) to map it to a non-negative index. When an element leaves the window, we increment `delayed[val + OFFSET]`. During pruning, we check `delayed[top + OFFSET] > 0`. If yes, the top is a ghost — we physically pop it, decrement the counter, and repeat. This approach gives \(O(1)\) insertion, deletion, and lookup for the delayed table, with minimal overhead and no hashing logic. The array-based approach works whenever the value range is bounded and small relative to memory limits. For larger or unbounded ranges, a hash table such as `uthash` (an external C library) or a balanced BST could be substituted, but the principle remains identical: map value → pending-deletion count.
+
+**哈希表的实现。** 在 C 语言中，没有内置的哈希表，选择的依据是问题的约束。对第 480 题，元素值范围从 \(-10^5\) 到 \(10^5\)，跨度约为 \(2 \times 10^5 + 1\) 个可能的整数。这个范围足够小，可以使用一个简单的**数组**作为直接访问的频率表，而非完整的哈希表。我们分配一个数组 `int *delayed`，大小约为 200001，通过给每个值加上一个常数偏移（例如 `val + 100000`）将其映射到非负下标。当元素离开窗口时，递增 `delayed[val + OFFSET]`。剪枝时，检查 `delayed[top + OFFSET] > 0`。若为真，堆顶是幽灵——物理弹出它，递减计数器，重复。此方法为延迟表提供了 \(O(1)\) 的插入、删除和查找，开销极小且无需哈希逻辑。基于数组的方法适用于值域有界且相对于内存限制较小的情况。对于更大或无界的值域，可以替换为 `uthash`（一个 C 语言外部哈希库）或平衡二叉搜索树，但原理完全相同：将值映射到待删除计数。
+
+**In summary, the incremental algorithm for each window slide is:**
+
+**综上，每个窗口滑动的增量算法是：**
+
+1. **Departure:** Identify the element that leaves the window. Increment its counter in the delayed table. Decrement the effective size of whichever heap it logically belonged to (determined by comparing it with the current median: if it is ≤ the median, it was in `left`; otherwise `right`).  
+   **离开：** 识别离开窗口的元素。在延迟表中递增其计数器。递减它在逻辑上所属堆的有效大小（通过将其与当前中位数比较确定：若 ≤ 中位数，它在 `left`；否则在 `right`）。
+
+2. **Arrival:** Insert the newly entering element using the value-aware insertion rule (compare with `left`'s top, then insert and rebalance), incrementing the effective size of the receiving heap.  
+   **进入：** 使用基于值的插入规则插入新进入的元素（与 `left` 堆顶比较，然后插入并重新平衡），递增接收堆的有效大小。
+
+3. **Prune:** Call prune on both heaps, so that any ghost elements that have risen to the top are physically removed and their delayed counters decremented.  
+   **剪枝：** 对两个堆调用剪枝，使任何上升到堆顶的幽灵元素被物理移除，其延迟计数器递减。
+
+4. **Rebalance:** If the effective sizes of the two heaps now violate the invariant (difference > 1), move a real element (the top, guaranteed real by pruning) from the larger heap to the smaller heap, and update effective sizes accordingly.  
+   **重新平衡：** 如果两个堆的有效大小现在违反了不变量（差值 > 1），从较大的堆移动一个真正元素（堆顶，剪枝保证为真）到较小的堆，并相应更新有效大小。
+
+5. **Query:** The median is computed from the tops of the two heaps as before. Pruning must be called before reading any top.  
+   **查询：** 中位数和之前一样从两个堆的堆顶计算。在读取任何堆顶之前必须调用剪枝。
+
+**Misconception 3: Lazy deletion eliminates the need for rebalancing.** Even with lazy deletion, the two heaps can drift out of size balance: one heap may accumulate many lazily deleted elements, causing its effective size to shrink relative to the other. After processing the entering and departing elements for a window slide, a rebalancing step must still be performed — moving elements from one heap to the other until the size invariant is restored. The rebalancing, like the insertion, is value-aware: elements moved from `left` to `right` are always `left`'s maximum (the most median-worthy element on that side), and elements moved from `right` to `left` are always `right`'s minimum.
+
+**误解三：惰性删除消除了重新平衡的必要。** 即使有惰性删除，两个堆仍可能漂移出大小平衡：一个堆可能积累很多惰性删除的元素，导致其有效大小相对另一个堆缩小。为一次窗口滑动处理完进入和离开的元素后，仍必须执行重新平衡步骤——将元素从一个堆移到另一个堆，直到大小不变量恢复。重新平衡和插入一样，是基于值的：从 `left` 移到 `right` 的元素始终是 `left` 的最大值（该侧最接近中位数的元素），从 `right` 移到 `left` 的元素始终是 `right` 的最小值。
+
+**What these two problems together teach.** Problem 295 introduces the dual-heap structure in a clean, insert-only setting. Problem 480 exposes what happens when the real world demands deletions — and reveals that the true power of the pattern lies not in the two heaps themselves, but in the invariant they collectively maintain. Value partitioning is the invariant; size balancing is the maintenance; lazy deletion is the engineering trick that keeps both intact when elements must depart. Moving from 295 to 480 is a miniature journey from "understanding a data structure" to "understanding why it works, and how to adapt it when the assumptions change."
+
+**这两道题共同教会我们什么。** 第 295 题在一个干净的、仅插入的场景中引入了双堆结构。第 480 题暴露了当现实世界要求删除时会发生什么——并揭示了这个模式的真正力量不在于两个堆本身，而在于它们共同维护的不变量。值划分是不变量；大小平衡是维护手段；惰性删除是当元素必须离开时保持两者完好的工程技巧。从 295 到 480 的推进，是一次从“理解一个数据结构”到“理解它为什么工作，以及当假设改变时如何适配它”的微型旅程。
+
+### 3.6 Other Variants: D-ary Heaps and Pairing Heaps / 其他变体：D-叉堆与配对堆
+
+The binary heap, with its elegant array representation and \(O(\log n)\) operations, dominates textbooks and standard libraries. But it is not the final word in heap design. Two additional variants deserve attention: the D-ary heap, a simple generalization of the binary heap that trades off between tree height and per-node work; and the pairing heap, a self-adjusting structure that is arguably the most practical of the amortized-efficient heaps. Both teach valuable lessons about how small structural changes can shift performance profiles.
+
+二叉堆凭借其优雅的数组表示和 \(O(\log n)\) 操作，统治了教材和标准库。但它并非堆设计的最终答案。还有两个值得关注的变体：D-叉堆，二叉堆的简单推广，在树高和每节点工作量之间做权衡；以及配对堆，一种自调整结构，可以说是在均摊高效堆中最实用的一个。两者都教给我们宝贵的经验：微小的结构变化如何改变性能特征。
+
+#### 3.6.1 D-ary Heaps: More Branches, Shallower Trees / D-叉堆：更多分支，更浅的树
+
+A binary heap gives each node exactly two children. A **D-ary heap** generalizes this: each node has \(d\) children, where \(d \ge 2\) is a fixed integer. The array representation extends cleanly. For 0-indexed arrays, the children of node \(i\) are at indices \(d \cdot i + 1, d \cdot i + 2, \dots, d \cdot i + d\). The parent of node \(i\) is at \(\lfloor (i - 1) / d \rfloor\). A binary heap is simply a D-ary heap with \(d = 2\).
+
+二叉堆给每个节点恰好两个子节点。**D-叉堆**对此进行推广：每个节点有 \(d\) 个子节点，其中 \(d \ge 2\) 是一个固定的整数。数组表示可以干净地扩展。对于 0 索引数组，节点 \(i\) 的子节点位于 \(d \cdot i + 1, d \cdot i + 2, \dots, d \cdot i + d\)。节点 \(i\) 的父节点位于 \(\lfloor (i - 1) / d \rfloor\)。二叉堆就是 \(d = 2\) 的 D-叉堆。
+
+**The tradeoff.** Increasing \(d\) makes the tree shallower: the height drops from \(\log_2 n\) to \(\log_d n\). This is beneficial for `heapifyUp` — an inserted element or a decreased key only needs to climb \(\log_d n\) levels to reach the root. It is harmful for `heapifyDown` — at each level, the algorithm must compare the parent against all \(d\) children to find the minimum, costing \(O(d)\) comparisons per level rather than \(O(1)\). The total cost of `pop` becomes \(O(d \cdot \log_d n)\). For `push` and `decrease-key`, the cost improves to \(O(\log_d n)\).
+
+**权衡。** 增加 \(d\) 使树更浅：高度从 \(\log_2 n\) 降到 \(\log_d n\)。这对 `heapifyUp` 有利——一个被插入或降低键值的元素只需攀爬 \(\log_d n\) 层即可到达根。这对 `heapifyDown` 不利——在每一层，算法必须将父节点与全部 \(d\) 个子节点比较以找到最小值，每层代价 \(O(d)\) 次比较而非 \(O(1)\)。`pop` 的总代价变为 \(O(d \cdot \log_d n)\)。对 `push` 和 `decrease-key`，代价改善为 \(O(\log_d n)\)。
+
+**Where D-ary heaps shine.** This tradeoff makes the D-ary heap an excellent fit for algorithms where `decrease-key` operations dramatically outnumber `extract-min` operations. The canonical example is **Dijkstra's shortest path algorithm on dense graphs**. In Dijkstra, the number of `decrease-key` calls is proportional to the number of edges \(E\), while the number of `extract-min` calls is proportional to the number of vertices \(V\). On a dense graph where \(E = \Theta(V^2)\), the `decrease-key` workload dominates. By increasing \(d\) (typical choices are \(d = 4\) or \(d = 8\)), each `decrease-key` becomes cheaper, while the harm to `extract-min` is amortized over the much larger number of edge relaxations. Empirical studies show that a 4-ary heap often outperforms a binary heap for Dijkstra on real road networks and other large graphs. The D-ary heap is a concrete illustration of a principle that recurs throughout data structure design: when one operation is the proven bottleneck, optimize for it even at the expense of others.
+
+**D-叉堆的用武之地。** 这种权衡使 D-叉堆非常适合 `decrease-key` 操作数量远超 `extract-min` 的算法。典型例子是**稠密图上的 Dijkstra 最短路径算法**。在 Dijkstra 中，`decrease-key` 的调用次数与边数 \(E\) 成正比，而 `extract-min` 的调用次数与顶点数 \(V\) 成正比。在 \(E = \Theta(V^2)\) 的稠密图上，`decrease-key` 工作负载占主导。通过增加 \(d\)（典型选择是 \(d = 4\) 或 \(d = 8\)），每次 `decrease-key` 变得更便宜，而对 `extract-min` 的损害被大量边松弛操作所均摊。实证研究表明，在真实道路网络和其他大型图上，4-叉堆在 Dijkstra 中往往优于二叉堆。D-叉堆具体诠释了数据结构设计中反复出现的一个原则：当某一操作是已证实的瓶颈时，即使牺牲其他操作也要为它优化。
+
+#### 3.6.2 Pairing Heaps: Self-Adjusting Simplicity / 配对堆：自调整的简洁
+
+The pairing heap occupies a unique position in the heap landscape. It was proposed in 1986 by Fredman, Sedgewick, Sleator, and Tarjan as a simpler, practical alternative to the Fibonacci heap. Its implementation is remarkably short — often under 50 lines of code — yet it achieves amortized \(O(\log n)\) for `extract-min` and amortized \(O(1)\) for `insert`, `merge`, and `decrease-key` (though the latter bound is conjectured, not proven). In practice, the pairing heap frequently outperforms both binary heaps and Fibonacci heaps across a wide range of benchmarks. It is the poster child for the "self-adjusting" design philosophy: the structure reorganizes itself on every operation, and this constant tinkering produces excellent amortized behavior without the need for complex invariants.
+
+配对堆在堆的版图中占据着独特的位置。它于 1986 年由 Fredman、Sedgewick、Sleator 和 Tarjan 提出，作为斐波那契堆更简单、更实用的替代品。它的实现异常简短——往往不到 50 行代码——却为 `extract-min` 实现了均摊 \(O(\log n)\)，为 `insert`、`merge` 和 `decrease-key` 实现了均摊 \(O(1)\)（尽管后者的界限是猜想，而非证明）。在实践中，配对堆在各种基准测试中经常同时优于二叉堆和斐波那契堆。它是“自调整”设计哲学的典范：结构在每次操作时自我重组，这种持续的微调产生了优秀的均摊行为，而不需要复杂的不变量。
+
+**Structure.** A pairing heap is a single multi-way tree. Each node stores a key and three pointers: a pointer to its **leftmost child**, a pointer to its **next sibling** (the node to its right in the sibling list), and a pointer to its **previous sibling** (or to its parent if it is the leftmost child — this dual-purpose pointer is a common implementation trick). The heap is accessed via a single root pointer. There is no degree constraint, no NPL field, no order invariant beyond the heap property itself: every node's key is less than or equal to the keys of its children.
+
+**结构。** 配对堆是一棵多叉树。每个节点存储一个键值和三个指针：指向其**最左孩子**的指针，指向其**下一个兄弟**的指针（兄弟链表中右侧的节点），以及指向其**上一个兄弟**的指针（若为最左孩子则指向父节点——这个双用途指针是常见的实现技巧）。堆通过一个单一的根指针访问。没有度约束，没有 NPL 字段，没有除堆性质本身之外的排序不变量：每个节点的键值小于等于其孩子的键值。
+
+**Insert and merge.** Insertion creates a single-node tree and links it with the existing root: if the new node's key is smaller, it becomes the new root and the old root becomes its child; otherwise, the new node becomes a child of the old root. This is a single comparison and pointer reassignment — \(O(1)\). Merging two pairing heaps is identical: compare the two roots, and make the larger root a child of the smaller root. Both operations are unconditionally \(O(1)\), with no cascading or cleanup.
+
+**插入与合并。** 插入创建一个单节点树并与现有根链接：若新节点的键值更小，它成为新根，旧根成为其孩子；否则，新节点成为旧根的孩子。这是一次比较和指针重定向——\(O(1)\)。合并两个配对堆完全相同：比较两个根，让较大的根成为较小根的孩子。两个操作都是无条件 \(O(1)\)，没有级联或清理。
+
+**Extract-min.** This is where the pairing heap earns its name and does its real work. Removing the root leaves behind a forest of orphaned child subtrees — the former root's children, arranged in a sibling list. These subtrees must be combined into a single heap. The pairing heap does this via a **two-pass pairing** procedure:
+
+**弹出最小。** 这是配对堆得名且真正干活的地方。移除根后留下一片孤儿子树森林——前根的孩子，排成一个兄弟链表。这些子树必须合并成一个堆。配对堆通过一个**两趟配对**过程来完成：
+
+- **Pass 1 (left-to-right pairing):** Walk the sibling list from left to right. Pair up consecutive siblings: merge the first with the second, the third with the fourth, and so on. Each merge produces a single tree. After this pass, the number of trees is halved.
+  **第一趟（从左到右配对）：** 从左到右遍历兄弟链表。将连续的兄弟配对：第一个与第二个合并，第三个与第四个合并，以此类推。每次合并产生一棵树。此趟之后，树的数量减半。
+
+- **Pass 2 (right-to-left accumulation):** Take the trees produced by Pass 1 and merge them from right to left: merge the rightmost tree into the second-rightmost, then merge the result into the third-rightmost, and so on, until a single tree remains. This becomes the new root.
+  **第二趟（从右到左累积）：** 取第一趟产生的树，从右到左合并：将最右边的树合并进倒数第二个，然后将结果合并进倒数第三个，以此类推，直到剩下一棵树。这成为新的根。
+
+The two-pass process costs \(O(k)\) where \(k\) is the number of children of the old root. Amortized analysis (using a potential function based on node degrees) shows that this cost averages to \(O(\log n)\) across a sequence of operations.
+
+两趟过程的代价为 \(O(k)\)，其中 \(k\) 是旧根的孩子数。均摊分析（使用基于节点度数的势函数）表明，在一系列操作中，这一代价平均为 \(O(\log n)\)。
+
+```
+Extract-min with pairing. Before deletion, the root has children
+A, B, C, D, E (as a linked list of siblings).
+
+Pass 1: pair A-B → AB, pair C-D → CD, E remains alone.
+        Resulting trees: AB, CD, E.
+
+Pass 2: accumulate right-to-left: merge E into CD → CDE.
+        merge CDE into AB → ABCDE. This is the new root.
+```
+
+```
+配对堆的弹出最小操作。删除前，根的孩子为 A, B, C, D, E（作为兄弟链表）。
+
+第一趟：配对 A-B → AB，配对 C-D → CD，E 落单。
+        结果树：AB, CD, E。
+
+第二趟：从右到左累积：将 E 合并进 CD → CDE。
+        将 CDE 合并进 AB → ABCDE。这就是新根。
+```
+
+**Decrease-key.** This is the operation that gives the pairing heap its advantage over the binary heap. Given a pointer to a node whose key is to be decreased, the algorithm updates the key. If the node is the root, nothing more is needed. If the node is not the root, it is **cut** from its parent and **linked** with the root using the same single-comparison link operation as insertion. This is \(O(1)\). The cut node may carry its own subtree with it — those children remain attached throughout. No cascading cuts occur. The simplicity of this operation — cut and link to root — is the pairing heap's killer feature.
+
+**Decrease-key。** 这是赋予配对堆相对二叉堆优势的操作。给定指向要降低键值的节点的指针，算法更新键值。若节点是根，无需更多操作。若节点不是根，将其从父节点**切下**并与根**链接**，使用和插入一样的单次比较链接操作。这是 \(O(1)\)。被切节点可以携带自己的子树——那些孩子全程保持附着。不发生级联切割。此操作的简洁——切下并链接到根——是配对堆的杀手锏。
+
+**Practical standing.** The pairing heap's amortized \(O(1)\) for `decrease-key` is, strictly speaking, a conjecture — no one has proven a matching lower bound or found a counterexample. Fredman proved an amortized \(O(\log n)\) bound in 1999, and Pettie proved an amortized \(O(2^{2\sqrt{\log \log n}})\) bound in 2005, but the exact tight bound remains an open problem. Despite this theoretical gap, the pairing heap is the practical winner in most empirical studies. Its code fits on a single screen. Its constant factors are tiny. It has no auxiliary arrays, no degree-dependent consolidation tables, and no cascading-cut machinery. In benchmarks comparing heap implementations for Dijkstra's algorithm, Prim's algorithm, and event-driven simulations, the pairing heap consistently finishes near or at the top — often beating both the binary heap (because of cheaper `decrease-key`) and the Fibonacci heap (because of much smaller constants, even though Fibonacci has asymptotically better amortized bounds).
+
+**实践地位。** 配对堆在 `decrease-key` 上的均摊 \(O(1)\) 严格来说是一个猜想——没有人证明过一个匹配的下界，也没有找到反例。Fredman 在 1999 年证明了均摊 \(O(\log n)\) 界限，Pettie 在 2005 年证明了均摊 \(O(2^{2\sqrt{\log \log n}})\) 界限，但确切的紧界限仍是一个开放问题。尽管存在这一理论空白，配对堆在大多数实证研究中是实践上的赢家。它的代码能装在一个屏幕上。它的常数因子极小。它没有辅助数组，没有依赖度数的合并表，没有级联切割机制。在比较 Dijkstra 算法、Prim 算法和事件驱动模拟的堆实现的基准测试中，配对堆始终接近或位于顶端——经常同时击败二叉堆（因为更便宜的 `decrease-key`）和斐波那契堆（因为常数因子小得多，尽管斐波那契有渐近更优的均摊界限）。
+
+**The lesson.** The pairing heap embodies a recurring theme in algorithm engineering: simplicity often beats complexity in practice, even when complexity has better theoretical credentials. If the Fibonacci heap is the Ferrari of priority queues — breathtaking on paper, finicky to build — the pairing heap is the well-tuned sports sedan: easier to manufacture, fast enough on real roads, and far more likely to be seen in actual use.
+
+**教训。** 配对堆体现了算法工程中反复出现的主题：在实践中，简单经常击败复杂，即使复杂有更好的理论证明。如果斐波那契堆是优先队列中的法拉利——纸上惊艳，制造精细——配对堆就是精心调校的运动轿车：更容易制造，在真实道路上足够快，而且在实际使用中更可能见到。
+
+## Afterword / 跋
+
+With this, we close our survey of heap variants — from the humble array-based binary heap through the mergeable forests of leftist, binomial, and Fibonacci heaps, to the pragmatic D-ary and pairing heaps. For the working programmer, however, the honest postscript is this: beyond the binary heap, almost none of these structures appear in everyday production code. As we mentioned before - The C++ Standard Library's `std::priority_queue` is a binary heap. Java's `java.util.PriorityQueue` is a binary heap. Python's `heapq` module is a binary heap. Go's `container/heap` package is a binary heap. The world's infrastructure runs on binary heaps — and it runs just fine. The more exotic structures we have studied are not useless, but their utility is concentrated in two narrow domains: theoretical computer science, where they settle fundamental questions about the optimal complexity of graph algorithms; and highly specialized systems — think network flow solvers, large-scale event simulators, or certain in-memory databases — where micro-optimizing a specific operation like `decrease-key` or `merge` yields measurable gains. For the vast majority of software that most of us will ever write, the binary heap is not merely adequate — it is optimal in the only metric that matters in production: it is simple, it is fast, and every engineer who reads the code already understands it. So why study the rest? Because understanding what lies beyond the binary heap — knowing that the Fibonacci heap exists and what it achieves, even if you never implement one — shapes how you think about amortized analysis, deferred work, and the trade-offs that lurk behind every abstraction. It is the difference between knowing how to use a tool and understanding why it works. And that understanding, even if it never leaves the whiteboard, is what turns a programmer into a computer scientist.
+
+至此，我们结束了对堆变体的巡览——从谦卑的基于数组的二叉堆，经过左偏堆、二项堆和斐波那契堆的可合并森林，到实用的 D-叉堆和配对堆。然而，对于一个工作中的程序员而言，诚实的后记是：在二叉堆之外，这些结构几乎没有出现在日常的生产代码中。就像我们在前面说过的，C++ 标准库的 `std::priority_queue` 是二叉堆。Java 的 `java.util.PriorityQueue` 是二叉堆。Python 的 `heapq` 模块是二叉堆。Go 的 `container/heap` 包是二叉堆。世界的基础设施在二叉堆上运行——而且运行得很好。我们研究过的更奇特的结构并非无用，但它们的用途集中在两个狭窄的领域：理论计算机科学，它们在那里解决关于图算法最优复杂度的基本问题；以及高度专门化的系统——比如网络流求解器、大规模事件模拟器或某些内存数据库——在那里对某个特定操作（如 `decrease-key` 或 `merge`）进行微观优化可以带来可测量的收益。对于我们大多数人将编写的大多数软件而言，二叉堆不仅仅是足够好——它在生产环境中唯一重要的度量标准上是最优的：它简单，它快，而且每个读到代码的工程师都已然理解它。那么为什么要研究其余的部分？因为理解二叉堆之外存在什么——知道斐波那契堆的存在及其成就，即使你从未实现过——塑造了你对均摊分析、延迟工作以及潜伏在每个抽象背后的权衡的思考方式。这便是知道如何使用工具和理解工具为何如此工作之间的区别。而这种理解，即便从未离开白板，正是将程序员转变为计算机科学家的东西。
