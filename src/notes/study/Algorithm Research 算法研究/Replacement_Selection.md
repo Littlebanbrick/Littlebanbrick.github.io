@@ -185,12 +185,14 @@ void heapifyDown(MinHeap *heap, int index) {
     while (1) {
         int left = 2 * index + 1;
         int right = 2 * index + 2;
+
         int smallest = index;
         if (left < size && recordGreater(arr[smallest], arr[left]))
             smallest = left;
         if (right < size && recordGreater(arr[smallest], arr[right]))
             smallest = right;
         if (smallest == index) break;
+
         Record tmp = arr[index];
         arr[index] = arr[smallest];
         arr[smallest] = tmp;
@@ -212,6 +214,7 @@ Record popMin(MinHeap *heap) {
 
 Record popAndReplace(MinHeap *heap, int newKey, int curRun) {
     Record top = heap->data[0];
+    
     Record newRec;
     newRec.key = newKey;
     newRec.run = (newKey >= top.key) ? curRun : curRun + 1;
@@ -251,7 +254,7 @@ int main() {
         if (inputIdx < N) {
             top = popAndReplace(heap, input[inputIdx], curRun);
             inputIdx++;
-        } else {
+        } else {    // inputIdx == N, which indicates that the input is used up
             top = popMin(heap);
         }
 
