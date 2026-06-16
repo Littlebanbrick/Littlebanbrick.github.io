@@ -1,8 +1,6 @@
 # Littlebanbrick's Full-Stack Blog
 
 > **Notice**: This dynamic blog is planned to cease maintenance in **August 2026**. At that time, all essential features will be migrated to this static site. The source code will remain intact on **GitHub**.
->
-> **注意**：此动态博客预计在 **2026 年 8 月** 停止维护，届时所有必要功能将移动至此静态博客，但源代码会在 GitHub 上原封不动予以保留。
 
 A modern, fully-featured personal blog platform built from scratch. It allows you to write and manage posts, interact with visitors through comments and likes, showcase your photography and projects, and even enjoy music integration – all while being easily deployable via Docker and automatically updated with CI/CD.
 
@@ -158,9 +156,9 @@ This project is open source. A license will be chosen and added in the future.
 
 ---
 
-> 中文版
-
 # Littlebanbrick 全栈博客
+
+> **注意**：此动态博客预计在 **2026 年 8 月** 停止维护，届时所有必要功能将移动至此静态博客，但源代码会在 GitHub 上原封不动予以保留。
 
 一个从头构建的现代化、功能齐全的个人博客平台。支持撰写和管理文章、评论与点赞互动、展示摄影作品和项目，甚至集成音乐播放 — 同时可通过 Docker 轻松部署，并通过 CI/CD 自动更新。
 
