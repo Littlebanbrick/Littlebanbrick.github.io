@@ -3,6 +3,7 @@ function Navigation({ activeSection, onSectionChange }) {
     { key: "welcome", label: "Welcome" },
     { key: "blog", label: "My Blog" },
     { key: "notes", label: "Study Notes" },
+    { key: "travelogues", label: "Travelogues" },
     { key: "essays", label: "Essays" },
     { key: "about", label: "About" },
   ];

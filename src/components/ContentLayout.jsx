@@ -14,6 +14,10 @@ const essaysGlob = import.meta.glob("../notes/essays/*.md", {
   query: "?raw",
   import: "default",
 });
+const traveloguesGlob = import.meta.glob("../notes/travelogues/**/*.md", {
+  query: "?raw",
+  import: "default",
+});
 const blogGlob = import.meta.glob("../notes/blog/*.md", {
   query: "?raw",
   import: "default",
@@ -56,7 +60,8 @@ async function loadNotesFromGlob(glob) {
       const content = await loader();
       const relativePath = path
         .replace("../notes/study/", "")
-        .replace("../notes/essays/", ""); // 去掉前缀
+        .replace("../notes/essays/", "")
+        .replace("../notes/travelogues/", ""); // 去掉前缀
       const parts = relativePath.split("/");
       let category = "Uncategorized"; // 默认分类
       let fileName;
@@ -156,6 +161,7 @@ function ContentLayout({
 
   const [studyCategories, setStudyCategories] = useState([]);
   const [essayCategories, setEssayCategories] = useState([]);
+  const [travelogueCategories, setTravelogueCategories] = useState([]);
   const [blogContent, setBlogContent] = useState("");
   const [aboutContent, setAboutContent] = useState("");
   const [welcomeContent, setWelcomeContent] = useState("");
@@ -163,6 +169,7 @@ function ContentLayout({
   useEffect(() => {
     loadNotesFromGlob(studyGlob).then(setStudyCategories);
     loadNotesFromGlob(essaysGlob).then(setEssayCategories);
+    loadNotesFromGlob(traveloguesGlob).then(setTravelogueCategories);
 
     // 加载 blog 文件
     const loadBlog = async () => {
@@ -348,6 +355,9 @@ function ContentLayout({
               categories={studyCategories}
               sectionTitle="Study Notes"
             />
+          )}
+          {activeSection === "travelogues" && (
+            <NotesSection categories={travelogueCategories} sectionTitle="Travelogues" />
           )}
           {activeSection === "essays" && (
             <NotesSection categories={essayCategories} sectionTitle="Essays" />
