@@ -47,7 +47,7 @@ A modern, fully-featured personal blog platform built from scratch. It allows yo
    # edit .env with JWT_SECRET_KEY, ADMIN_SECRET_KEY, email credentials, etc.
    ```
 
-   > **Important**: See the [Environment Variables](#environment-variables) table below for the full list.
+   > **Important**: See the Environment Variables table below for the full list.
 
 3. Build and start all services:
    ```bash
@@ -142,17 +142,13 @@ my-blog/
 | `FRONTEND_BASE_URL` | Yes       | Public URL of your frontend (used in email verification links)                 |
 | `ENV`               | Yes       | Set to `production` for HTTPS cookies, `development` otherwise                 |
 
-## Running Tests
-
-Tests are not yet implemented. The project is currently validated through manual endpoint testing.
-
 ## Contributing
 
 Contributions are welcome! Please open an issue or submit a pull request. For major changes, discuss first.
 
 ## License
 
-This project is open source. A license will be chosen and added in the future.
+MIT LICENSE
 
 ---
 
@@ -205,7 +201,7 @@ This project is open source. A license will be chosen and added in the future.
    # 编辑 .env，填入 JWT_SECRET_KEY、ADMIN_SECRET_KEY、邮箱凭据等
    ```
 
-   > **重要**：完整变量列表请参见下方的[环境变量](#environment-variables)表。
+   > **重要**：完整变量列表请参见下方的环境变量表。
 
 3. 构建并启动所有服务：
    ```bash
@@ -300,14 +296,10 @@ my-blog/
 | `FRONTEND_BASE_URL`  | 是       | 前端的公开 URL（用于邮箱验证链接）                      |
 | `ENV`                | 是       | 生产环境设为 `production`（启用 HTTPS Cookie），开发环境设为其他值 |
 
-## 运行测试
-
-测试尚未实现。目前通过手动端点测试进行验证。
-
 ## 贡献
 
 欢迎贡献代码！请提交 Issue 或 Pull Request。重大变更请先讨论。
 
 ## 许可
 
-本项目为开源项目，许可协议将在后续确定并添加。
+MIT LICENSE
