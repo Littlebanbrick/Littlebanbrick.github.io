@@ -142,14 +142,6 @@ my-blog/
 | `FRONTEND_BASE_URL` | Yes       | Public URL of your frontend (used in email verification links)                 |
 | `ENV`               | Yes       | Set to `production` for HTTPS cookies, `development` otherwise                 |
 
-## Contributing
-
-Contributions are welcome! Please open an issue or submit a pull request. For major changes, discuss first.
-
-## License
-
-MIT LICENSE
-
 ---
 
 # Littlebanbrick 全栈博客
@@ -295,11 +287,3 @@ my-blog/
 | `MCP_SECRET_KEY`     | 否       | 远程文章创建 API 认证密钥                              |
 | `FRONTEND_BASE_URL`  | 是       | 前端的公开 URL（用于邮箱验证链接）                      |
 | `ENV`                | 是       | 生产环境设为 `production`（启用 HTTPS Cookie），开发环境设为其他值 |
-
-## 贡献
-
-欢迎贡献代码！请提交 Issue 或 Pull Request。重大变更请先讨论。
-
-## 许可
-
-MIT LICENSE
