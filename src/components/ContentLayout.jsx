@@ -58,21 +58,24 @@ async function loadNotesFromGlob(glob) {
   await Promise.all(
     entries.map(async ([path, loader]) => {
       const content = await loader();
-      const relativePath = path
-        .replace("../notes/study/", "")
-        .replace("../notes/essays/", "")
-        .replace("../notes/travelogues/", ""); // 去掉前缀
-      const parts = relativePath.split("/");
+      // 去掉公共前缀 ../notes/ 及其后的栏目目录名，得到相对路径
+      const afterNotes = path.startsWith("../notes/")
+        ? path.slice("../notes/".length)
+        : path;
+      const parts = afterNotes.split("/");
+      // parts[0] 是栏目目录 (study/essays/travelogues)，跳过它；
+      // 剩余部分若有子目录则取第一段作为分类
+      const subParts = parts.slice(1);
       let category = "Uncategorized"; // 默认分类
       let fileName;
 
-      if (parts.length > 1) {
+      if (subParts.length > 1) {
         // 有子文件夹，分类是文件夹名
-        category = parts[0];
-        fileName = parts[parts.length - 1].replace(".md", "");
+        category = subParts[0];
+        fileName = subParts[subParts.length - 1].replace(".md", "");
       } else {
         // 根目录下的文件
-        fileName = parts[0].replace(".md", "");
+        fileName = subParts[0].replace(".md", "");
       }
 
       const firstLine = content.split("\n")[0].replace(/^#\s+/, "");
@@ -154,6 +157,11 @@ function ContentLayout({
     el.addEventListener("scroll", handleScroll, { passive: true });
     return () => el.removeEventListener("scroll", handleScroll);
   }, []);
+
+  // 切换导航栏目时，将主内容区滚回顶部
+  useEffect(() => {
+    mainRef.current?.scrollTo({ top: 0 });
+  }, [activeSection]);
 
   const scrollToTop = () => {
     mainRef.current?.scrollTo({ top: 0, behavior: "smooth" });

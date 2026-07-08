@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import ReactMarkdown from "react-markdown";
 import rehypeRaw from "rehype-raw";
 import remarkGfm from "remark-gfm";
@@ -10,6 +10,11 @@ function NotesSection({ categories, sectionTitle }) {
   const [selectedNote, setSelectedNote] = useState(null);
   const [selectedFolder, setSelectedFolder] = useState(null);
   const [searchQuery, setSearchQuery] = useState("");
+
+  // 打开/关闭笔记或文件夹时，将主内容区滚回顶部
+  useEffect(() => {
+    document.querySelector("main")?.scrollTo({ top: 0 });
+  }, [selectedNote, selectedFolder]);
 
   const folders = categories.filter((cat) => cat.title !== "Uncategorized");
   const uncategorized = categories.find(

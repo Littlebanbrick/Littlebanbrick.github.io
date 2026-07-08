@@ -8,7 +8,9 @@ import normalizeMath from '../utils/math';
 // 每天变一次的版本号，强制浏览器重新请求外部图片
 function dailyVersion() {
   const now = new Date();
-  return `${now.getFullYear()}-${now.getMonth() + 1}-${now.getDate()}`;
+  const m = String(now.getMonth() + 1).padStart(2, "0");
+  const d = String(now.getDate()).padStart(2, "0");
+  return `${now.getFullYear()}-${m}-${d}`;
 }
 
 function ImgWithFallback(props) {

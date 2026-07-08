@@ -34,6 +34,13 @@ function Cover({ stage, onCoverClick, onCoverExitEnd }) {
       id="cover-root"
       ref={coverRef}
       className={coverClass}
+      role="button"
+      tabIndex={isClickable ? 0 : -1}
+      onKeyDown={(e) => {
+        if (isClickable && e.key === "Enter") {
+          onCoverClick();
+        }
+      }}
       style={{
         background: `
           linear-gradient(rgba(0,0,0,0.3), rgba(0,0,0,0.3)),

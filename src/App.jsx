@@ -42,16 +42,6 @@ function App() {
     setStage("cover");
   };
 
-  // 根据 stage 决定组件的动画类名
-  const coverClassName =
-    stage === "cover" || stage === "cover-exit"
-      ? "cover-visible"
-      : "cover-hidden";
-  const contentClassName =
-    stage === "content" || stage === "content-exit"
-      ? "content-visible"
-      : "content-hidden";
-
   return (
     <>
       <Cover

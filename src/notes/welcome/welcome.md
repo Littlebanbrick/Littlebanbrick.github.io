@@ -25,6 +25,12 @@
   What I'm learning in CS.
 </p>
 
+<h3 style="margin-top: 2rem; margin-bottom: 0.2rem;">Travelogues</h3>
+<p style="color: #888; font-size: 0.95em; margin-top: 0;">
+  旅行中的见闻与记录。<br/>
+  Sights and notes from travels.
+</p>
+
 <h3 style="margin-top: 2rem; margin-bottom: 0.2rem;">Essays</h3>
 <p style="color: #888; font-size: 0.95em; margin-top: 0;">
   更长的思考：关于技术、设计，和那些让技术变得有人情味的事物。<br/>
