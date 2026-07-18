@@ -1,6 +1,8 @@
 # About Me
 
-Hello! It's Johnny here.
+Hello! It's Johnny here.  
+
+<br>
 
 I’m a sophomore CS student at Zhejiang University, originally from Shenzhen, Guangdong Province. Somehow freshman year is already behind me, and I’m still trying to figure out how to make this university life feel a little more like my own.  
 我是一名zju sophomore，来自广东深圳，主修计算机科学。不知不觉大一已经过去了，而我似乎还在继续摸索，怎样才能让大学生活更像是由自己真正掌握着的东西。 
