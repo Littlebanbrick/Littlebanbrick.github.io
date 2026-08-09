@@ -22,11 +22,6 @@ Learning CS gives me a strange sense of power over machines, but life is obvious
 
 <br>
 
-Because of the minimalist style of this static website, I don’t plan to put my photography work here. If you’d like to see what I’ve captured in everyday life, you can visit [my other blog](https://littlebanbrick.cn) — the one that feels more like a “real” personal blog. This site is more text-oriented: a place for study notes, thoughts, and occasional fragments from a writing habit that has admittedly been neglected for a long time.  
-出于这个静态网站的风格设计，我没有，也不打算，往上面放我的摄影作品。如果想看看我在生活中捕捉到了什么，可以前往我的另一个（真正意义上的）[个人博客](https://littlebanbrick.cn)。这里的内容以文字为主，会有一些学习笔记放在上面，当然，也包括我年久失修的写作爱好的一些小产出。 
-
-<br>
-
 I’ve always believed that technology is not only about efficiency and engineering. It is also about creativity, expression, and the connections between people. I’m still learning, still exploring, and still trying, step by step, to create things that actually mean something. Recently, I’ve been pushing myself to do at least something on GitHub every day — maybe a few commits, maybe just discovering interesting tools through Trending. So far, it feels like the lowest-cost yet most effective way I know to keep wandering through the world of technology and the internet.  
 我一直认为，技术不仅仅是效率和工程，它也关乎创造、表达，以及人与人之间的连接。我仍然在学习、在探索，也仍然在一步一步尝试做出真正有意义的东西。我正在努力推动自己每天在GitHub上面做些什么，可能是几个commits，也可能是在Trending里面发现一些有用的工具——这是我目前能想到的低成本且最有效的巡游网络世界的方式。 
 

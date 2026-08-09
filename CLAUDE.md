@@ -4,7 +4,9 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## What this is
 
-A static personal site (React 19 + Vite 8) deployed to GitHub Pages at `Littlebanbrick.github.io`. It has no backend: all content is Markdown files under `src/notes/` bundled at build time. The "My Blog" section links out to a separate dynamic full-stack blog at `littlebanbrick.cn` (described in `src/notes/blog/blog_readme.md`, source in a different `my-blog` repo) — that blog is being deprecated in August 2026 and its content is being migrated into this static site.
+A static personal site (React 19 + Vite 8) deployed to GitHub Pages at `Littlebanbrick.github.io`, also served from the custom domain `littlebanbrick.cn`. It has no backend: all content is Markdown files under `src/notes/` bundled at build time. A previous dynamic full-stack blog (source in a separate `my-blog` repo) that used to live at `littlebanbrick.cn` has been decommissioned and destroyed; the domain now resolves to this static site, which consolidates the surviving content.
+
+The site has four sections, in this sidebar order: **About** (first, replacing the old Welcome landing), **Study Notes**, **Travelogues**, **Essays**. The former `Welcome` and `My Blog` sections have been removed.
 
 ## Commands
 
@@ -35,7 +37,7 @@ Both `Cover` and `ContentLayout` are `position: fixed` full-screen overlays (see
 - `study`  → `../notes/study/**/*.md`  (recursive — subfolders become categories)
 - `travelogues` → `../notes/travelogues/**/*.md` (recursive)
 - `essays` → `../notes/essays/*.md` (flat only — a subfolder here would be ignored)
-- `blog` / `about` / `welcome` → single-file loaders (first match wins)
+- `about` → single-file loader (first match wins)
 
 `loadNotesFromGlob` parses each file into `{ id, title, preview, content, pinned }`:
 - **title** = first `# ` heading line (falls back to filename)
@@ -53,7 +55,7 @@ Notes are plain `.md` files. Two optional HTML-comment directives are parsed by 
 <!-- pinned: true -->
 ```
 
-Notes render through `react-markdown` with `remark-gfm`, `remark-math`, `rehype-katex`, and **`rehype-raw`** (raw HTML in Markdown is allowed and used — the welcome/about notes embed inline `<div>`/`<p>` with styles). `src/utils/math.js` (`normalizeMath`) rewrites `\(...\)` → `$...$` and `\[...\]` → `$$...$$` before rendering, because CommonMark strips the backslash before `remark-math` sees it — keep using `$`/`$$` directly in new notes if possible.
+Notes render through `react-markdown` with `remark-gfm`, `remark-math`, `rehype-katex`, and **`rehype-raw`** (raw HTML in Markdown is allowed and used — the about note embeds inline `<div>`/`<p>` with styles). `src/utils/math.js` (`normalizeMath`) rewrites `\(...\)` → `$...$` and `\[...\]` → `$$...$$` before rendering, because CommonMark strips the backslash before `remark-math` sees it — keep using `$`/`$$` directly in new notes if possible.
 
 ### Theme
 
