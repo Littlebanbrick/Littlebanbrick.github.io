@@ -1,10 +1,8 @@
 import { useState, useEffect, useRef } from "react";
 import Header from "./Header";
 import Navigation from "./Navigation";
-import BlogSection from "./BlogSection";
 import NotesSection from "./NotesSection";
 import AboutSection from "./AboutSection";
-import WelcomeSection from "./WelcomeSection";
 
 const studyGlob = import.meta.glob("../notes/study/**/*.md", {
   query: "?raw",
@@ -18,17 +16,8 @@ const traveloguesGlob = import.meta.glob("../notes/travelogues/**/*.md", {
   query: "?raw",
   import: "default",
 });
-const blogGlob = import.meta.glob("../notes/blog/*.md", {
-  query: "?raw",
-  import: "default",
-});
 
 const aboutGlob = import.meta.glob("../notes/about/*.md", {
-  query: "?raw",
-  import: "default",
-});
-
-const welcomeGlob = import.meta.glob("../notes/welcome/*.md", {
   query: "?raw",
   import: "default",
 });
@@ -136,7 +125,7 @@ function ContentLayout({
   const [sidebarOpen, setSidebarOpen] = useState(true);
   const [showArrow, setShowArrow] = useState(false);
   const [showBackToTop, setShowBackToTop] = useState(false);
-  const [activeSection, setActiveSection] = useState("welcome");
+  const [activeSection, setActiveSection] = useState("about");
   const contentRef = useRef(null);
   const mainRef = useRef(null);
 
@@ -170,24 +159,12 @@ function ContentLayout({
   const [studyCategories, setStudyCategories] = useState([]);
   const [essayCategories, setEssayCategories] = useState([]);
   const [travelogueCategories, setTravelogueCategories] = useState([]);
-  const [blogContent, setBlogContent] = useState("");
   const [aboutContent, setAboutContent] = useState("");
-  const [welcomeContent, setWelcomeContent] = useState("");
 
   useEffect(() => {
     loadNotesFromGlob(studyGlob).then(setStudyCategories);
     loadNotesFromGlob(essaysGlob).then(setEssayCategories);
     loadNotesFromGlob(traveloguesGlob).then(setTravelogueCategories);
-
-    // 加载 blog 文件
-    const loadBlog = async () => {
-      const entries = Object.entries(blogGlob);
-      if (entries.length > 0) {
-        const content = await entries[0][1]();
-        setBlogContent(content);
-      }
-    };
-    loadBlog();
 
     // 加载 about 文件
     const loadAbout = async () => {
@@ -198,16 +175,6 @@ function ContentLayout({
       }
     };
     loadAbout();
-
-    // 加载 welcome 文件
-    const loadWelcome = async () => {
-      const entries = Object.entries(welcomeGlob);
-      if (entries.length > 0) {
-        const content = await entries[0][1]();
-        setWelcomeContent(content);
-      }
-    };
-    loadWelcome();
   }, []);
 
   // 动画过渡结束监听
@@ -357,7 +324,7 @@ function ContentLayout({
           ref={mainRef}
           style={{ flex: 1, overflow: "auto", paddingLeft: "1.5rem" }}
         >
-          {activeSection === "blog" && <BlogSection content={blogContent} />}
+          {activeSection === "about" && <AboutSection content={aboutContent} />}
           {activeSection === "notes" && (
             <NotesSection
               categories={studyCategories}
@@ -365,14 +332,16 @@ function ContentLayout({
             />
           )}
           {activeSection === "travelogues" && (
-            <NotesSection categories={travelogueCategories} sectionTitle="Travelogues" />
+            <NotesSection
+              categories={travelogueCategories}
+              sectionTitle="Travelogues"
+            />
           )}
           {activeSection === "essays" && (
-            <NotesSection categories={essayCategories} sectionTitle="Essays" />
-          )}
-          {activeSection === "about" && <AboutSection content={aboutContent} />}
-          {activeSection === "welcome" && (
-            <WelcomeSection content={welcomeContent} />
+            <NotesSection
+              categories={essayCategories}
+              sectionTitle="Essays"
+            />
           )}
         </main>
 
